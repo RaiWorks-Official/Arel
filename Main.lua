@@ -6,12 +6,493 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
-
-local UIModule = require(script.Parent.UI)
-local WidgetsModule = require(script.Parent.Widgets)
+local HttpService = game:GetService("HttpService")
 
 local IconsModule = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Footagesus/Icons/main/Main-v2.lua"))()
 IconsModule.SetIconsType("lucide")
+
+local UIModule = {
+	Themes = {
+		black = {
+			Background = Color3.fromRGB(15, 15, 15),
+			TopBar = Color3.fromRGB(20, 20, 20),
+			ElementBackground = Color3.fromRGB(25, 25, 25),
+			AccentColor = Color3.fromRGB(255, 255, 255),
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTextColor = Color3.fromRGB(180, 180, 180),
+			ToggleOn = Color3.fromRGB(0, 255, 100),
+			ToggleOff = Color3.fromRGB(255, 50, 50),
+			SectionBorder = Color3.fromRGB(40, 40, 40)
+		},
+		blue = {
+			Background = Color3.fromRGB(10, 15, 25),
+			TopBar = Color3.fromRGB(15, 20, 35),
+			ElementBackground = Color3.fromRGB(20, 30, 45),
+			AccentColor = Color3.fromRGB(70, 130, 255),
+			TextColor = Color3.fromRGB(255, 255, 255),
+			SubTextColor = Color3.fromRGB(170, 180, 200),
+			ToggleOn = Color3.fromRGB(70, 130, 255),
+			ToggleOff = Color3.fromRGB(255, 70, 70),
+			SectionBorder = Color3.fromRGB(35, 50, 70)
+		}
+	}
+}
+
+local WidgetsModule = {}
+
+function WidgetsModule:Button(parent, theme, title, desc, icon, callback)
+	local button = Instance.new("TextButton")
+	button.Name = "Button"
+	button.Size = UDim2.new(1, -20, 0, desc and 60 or 45)
+	button.BackgroundColor3 = theme.ElementBackground
+	button.BorderSizePixel = 0
+	button.Text = ""
+	button.AutoButtonColor = false
+	button.Parent = parent
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = button
+	
+	if icon then
+		local iconLabel = Instance.new("ImageLabel")
+		iconLabel.Size = UDim2.new(0, 24, 0, 24)
+		iconLabel.Position = UDim2.new(0, 12, 0.5, -12)
+		iconLabel.BackgroundTransparency = 1
+		iconLabel.Image = IconsModule.GetIcon(icon)
+		iconLabel.ImageColor3 = theme.TextColor
+		iconLabel.Parent = button
+	end
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.new(1, icon and -120 or -85, 0, desc and 20 or 45)
+	titleLabel.Position = UDim2.new(0, icon and 45 or 15, 0, desc and 8 or 0)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = title
+	titleLabel.TextColor3 = theme.TextColor
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamMedium
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.TextYAlignment = desc and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
+	titleLabel.Parent = button
+	
+	if desc then
+		local descLabel = Instance.new("TextLabel")
+		descLabel.Size = UDim2.new(1, icon and -120 or -85, 0, 25)
+		descLabel.Position = UDim2.new(0, icon and 45 or 15, 0, 30)
+		descLabel.BackgroundTransparency = 1
+		descLabel.Text = desc
+		descLabel.TextColor3 = theme.SubTextColor
+		descLabel.TextSize = 12
+		descLabel.Font = Enum.Font.Gotham
+		descLabel.TextXAlignment = Enum.TextXAlignment.Left
+		descLabel.TextYAlignment = Enum.TextYAlignment.Top
+		descLabel.TextWrapped = true
+		descLabel.Parent = button
+	end
+	
+	local arrow = Instance.new("TextLabel")
+	arrow.Size = UDim2.new(0, 20, 0, 20)
+	arrow.Position = UDim2.new(1, -35, 0.5, -10)
+	arrow.BackgroundTransparency = 1
+	arrow.Text = "→"
+	arrow.TextColor3 = theme.SubTextColor
+	arrow.TextSize = 16
+	arrow.Font = Enum.Font.GothamBold
+	arrow.Parent = button
+	
+	button.MouseEnter:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(
+			theme.ElementBackground.R * 255 + 10,
+			theme.ElementBackground.G * 255 + 10,
+			theme.ElementBackground.B * 255 + 10
+		)}):Play()
+	end)
+	
+	button.MouseLeave:Connect(function()
+		TweenService:Create(button, TweenInfo.new(0.2), {BackgroundColor3 = theme.ElementBackground}):Play()
+	end)
+	
+	button.MouseButton1Click:Connect(function()
+		if callback then
+			callback()
+		end
+	end)
+	
+	return button
+end
+
+function WidgetsModule:Toggle(parent, theme, title, callback)
+	local toggleFrame = Instance.new("Frame")
+	toggleFrame.Name = "Toggle"
+	toggleFrame.Size = UDim2.new(1, -20, 0, 45)
+	toggleFrame.BackgroundColor3 = theme.ElementBackground
+	toggleFrame.BorderSizePixel = 0
+	toggleFrame.Parent = parent
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = toggleFrame
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.new(1, -80, 1, 0)
+	titleLabel.Position = UDim2.new(0, 15, 0, 0)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = title
+	titleLabel.TextColor3 = theme.TextColor
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamMedium
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.Parent = toggleFrame
+	
+	local toggleButton = Instance.new("TextButton")
+	toggleButton.Size = UDim2.new(0, 50, 0, 26)
+	toggleButton.Position = UDim2.new(1, -65, 0.5, -13)
+	toggleButton.BackgroundColor3 = theme.ToggleOff
+	toggleButton.BorderSizePixel = 0
+	toggleButton.Text = ""
+	toggleButton.Parent = toggleFrame
+	
+	local toggleCorner = Instance.new("UICorner")
+	toggleCorner.CornerRadius = UDim.new(0, 13)
+	toggleCorner.Parent = toggleButton
+	
+	local toggleCircle = Instance.new("Frame")
+	toggleCircle.Size = UDim2.new(0, 20, 0, 20)
+	toggleCircle.Position = UDim2.new(0, 3, 0.5, -10)
+	toggleCircle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	toggleCircle.BorderSizePixel = 0
+	toggleCircle.Parent = toggleButton
+	
+	local circleCorner = Instance.new("UICorner")
+	circleCorner.CornerRadius = UDim.new(0, 10)
+	circleCorner.Parent = toggleCircle
+	
+	local toggled = false
+	
+	toggleButton.MouseButton1Click:Connect(function()
+		toggled = not toggled
+		
+		if toggled then
+			TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = theme.ToggleOn}):Play()
+			TweenService:Create(toggleCircle, TweenInfo.new(0.2), {Position = UDim2.new(1, -23, 0.5, -10)}):Play()
+		else
+			TweenService:Create(toggleButton, TweenInfo.new(0.2), {BackgroundColor3 = theme.ToggleOff}):Play()
+			TweenService:Create(toggleCircle, TweenInfo.new(0.2), {Position = UDim2.new(0, 3, 0.5, -10)}):Play()
+		end
+		
+		if callback then
+			callback(toggled)
+		end
+	end)
+	
+	return {Frame = toggleFrame, Toggle = function() toggleButton.MouseButton1Click:Fire() end}
+end
+
+function WidgetsModule:Input(parent, theme, title, placeholder, callback)
+	local inputFrame = Instance.new("Frame")
+	inputFrame.Name = "Input"
+	inputFrame.Size = UDim2.new(1, -20, 0, 45)
+	inputFrame.BackgroundColor3 = theme.ElementBackground
+	inputFrame.BorderSizePixel = 0
+	inputFrame.Parent = parent
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = inputFrame
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.new(0.4, 0, 1, 0)
+	titleLabel.Position = UDim2.new(0, 15, 0, 0)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = title
+	titleLabel.TextColor3 = theme.TextColor
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamMedium
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.Parent = inputFrame
+	
+	local textBox = Instance.new("TextBox")
+	textBox.Size = UDim2.new(0.55, -20, 0, 30)
+	textBox.Position = UDim2.new(0.45, 0, 0.5, -15)
+	textBox.BackgroundColor3 = Color3.fromRGB(
+		theme.ElementBackground.R * 255 - 10,
+		theme.ElementBackground.G * 255 - 10,
+		theme.ElementBackground.B * 255 - 10
+	)
+	textBox.BorderSizePixel = 0
+	textBox.Text = ""
+	textBox.PlaceholderText = placeholder or "Enter text..."
+	textBox.TextColor3 = theme.TextColor
+	textBox.PlaceholderColor3 = theme.SubTextColor
+	textBox.TextSize = 13
+	textBox.Font = Enum.Font.Gotham
+	textBox.ClearTextOnFocus = false
+	textBox.Parent = inputFrame
+	
+	local textBoxCorner = Instance.new("UICorner")
+	textBoxCorner.CornerRadius = UDim.new(0, 6)
+	textBoxCorner.Parent = textBox
+	
+	textBox.FocusLost:Connect(function(enter)
+		if enter and callback then
+			callback(textBox.Text)
+		end
+	end)
+	
+	return {Frame = inputFrame, GetText = function() return textBox.Text end, SetText = function(txt) textBox.Text = txt end}
+end
+
+function WidgetsModule:Paragraph(parent, theme, title, subtext, index)
+	local paragraphFrame = Instance.new("Frame")
+	paragraphFrame.Name = "Paragraph"
+	paragraphFrame.Size = UDim2.new(1, -20, 0, 70)
+	paragraphFrame.BackgroundColor3 = theme.ElementBackground
+	paragraphFrame.BorderSizePixel = 0
+	paragraphFrame.LayoutOrder = index or 0
+	paragraphFrame.Parent = parent
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = paragraphFrame
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.new(1, -30, 0, 20)
+	titleLabel.Position = UDim2.new(0, 15, 0, 10)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = title
+	titleLabel.TextColor3 = theme.TextColor
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.TextYAlignment = Enum.TextYAlignment.Top
+	titleLabel.Parent = paragraphFrame
+	
+	local subtextLabel = Instance.new("TextLabel")
+	subtextLabel.Name = "Subtext"
+	subtextLabel.Size = UDim2.new(1, -30, 0, 35)
+	subtextLabel.Position = UDim2.new(0, 15, 0, 30)
+	subtextLabel.BackgroundTransparency = 1
+	subtextLabel.Text = subtext
+	subtextLabel.TextColor3 = theme.SubTextColor
+	subtextLabel.TextSize = 12
+	subtextLabel.Font = Enum.Font.Gotham
+	subtextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	subtextLabel.TextYAlignment = Enum.TextYAlignment.Top
+	subtextLabel.TextWrapped = true
+	subtextLabel.Parent = paragraphFrame
+	
+	return {
+		Frame = paragraphFrame,
+		SetText = function(newText)
+			subtextLabel.Text = newText
+		end
+	}
+end
+
+function WidgetsModule:Invite(parent, theme, text, desc, link)
+	local inviteFrame = Instance.new("Frame")
+	inviteFrame.Name = "Invite"
+	inviteFrame.Size = UDim2.new(1, -20, 0, 70)
+	inviteFrame.BackgroundColor3 = theme.ElementBackground
+	inviteFrame.BorderSizePixel = 0
+	inviteFrame.Parent = parent
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = inviteFrame
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.new(1, -120, 0, 20)
+	titleLabel.Position = UDim2.new(0, 15, 0, 10)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = text
+	titleLabel.TextColor3 = theme.TextColor
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamBold
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.Parent = inviteFrame
+	
+	local descLabel = Instance.new("TextLabel")
+	descLabel.Size = UDim2.new(1, -120, 0, 35)
+	descLabel.Position = UDim2.new(0, 15, 0, 30)
+	descLabel.BackgroundTransparency = 1
+	descLabel.Text = desc
+	descLabel.TextColor3 = theme.SubTextColor
+	descLabel.TextSize = 12
+	descLabel.Font = Enum.Font.Gotham
+	descLabel.TextXAlignment = Enum.TextXAlignment.Left
+	descLabel.TextWrapped = true
+	descLabel.Parent = inviteFrame
+	
+	local joinButton = Instance.new("TextButton")
+	joinButton.Size = UDim2.new(0, 90, 0, 35)
+	joinButton.Position = UDim2.new(1, -105, 0.5, -17.5)
+	joinButton.BackgroundColor3 = theme.AccentColor
+	joinButton.BorderSizePixel = 0
+	joinButton.Text = "Join"
+	joinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+	joinButton.TextSize = 13
+	joinButton.Font = Enum.Font.GothamBold
+	joinButton.Parent = inviteFrame
+	
+	local btnCorner = Instance.new("UICorner")
+	btnCorner.CornerRadius = UDim.new(0, 6)
+	btnCorner.Parent = joinButton
+	
+	joinButton.MouseButton1Click:Connect(function()
+		if setclipboard then
+			setclipboard(link)
+		end
+	end)
+	
+	joinButton.MouseEnter:Connect(function()
+		TweenService:Create(joinButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(
+			theme.AccentColor.R * 255 + 20,
+			theme.AccentColor.G * 255 + 20,
+			theme.AccentColor.B * 255 + 20
+		)}):Play()
+	end)
+	
+	joinButton.MouseLeave:Connect(function()
+		TweenService:Create(joinButton, TweenInfo.new(0.2), {BackgroundColor3 = theme.AccentColor}):Play()
+	end)
+	
+	return inviteFrame
+end
+
+function WidgetsModule:Slider(parent, theme, title, min, max, callback)
+	local sliderFrame = Instance.new("Frame")
+	sliderFrame.Name = "Slider"
+	sliderFrame.Size = UDim2.new(1, -20, 0, 60)
+	sliderFrame.BackgroundColor3 = theme.ElementBackground
+	sliderFrame.BorderSizePixel = 0
+	sliderFrame.Parent = parent
+	
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = sliderFrame
+	
+	local titleLabel = Instance.new("TextLabel")
+	titleLabel.Size = UDim2.new(0.6, 0, 0, 20)
+	titleLabel.Position = UDim2.new(0, 15, 0, 8)
+	titleLabel.BackgroundTransparency = 1
+	titleLabel.Text = title
+	titleLabel.TextColor3 = theme.TextColor
+	titleLabel.TextSize = 14
+	titleLabel.Font = Enum.Font.GothamMedium
+	titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	titleLabel.Parent = sliderFrame
+	
+	local valueBox = Instance.new("TextBox")
+	valueBox.Size = UDim2.new(0, 60, 0, 24)
+	valueBox.Position = UDim2.new(1, -75, 0, 6)
+	valueBox.BackgroundColor3 = Color3.fromRGB(
+		theme.ElementBackground.R * 255 - 10,
+		theme.ElementBackground.G * 255 - 10,
+		theme.ElementBackground.B * 255 - 10
+	)
+	valueBox.BorderSizePixel = 0
+	valueBox.Text = tostring(min)
+	valueBox.TextColor3 = theme.TextColor
+	valueBox.TextSize = 12
+	valueBox.Font = Enum.Font.GothamBold
+	valueBox.Parent = sliderFrame
+	
+	local valueCorner = Instance.new("UICorner")
+	valueCorner.CornerRadius = UDim.new(0, 6)
+	valueCorner.Parent = valueBox
+	
+	local sliderBack = Instance.new("Frame")
+	sliderBack.Size = UDim2.new(1, -30, 0, 6)
+	sliderBack.Position = UDim2.new(0, 15, 1, -20)
+	sliderBack.BackgroundColor3 = Color3.fromRGB(
+		theme.ElementBackground.R * 255 - 15,
+		theme.ElementBackground.G * 255 - 15,
+		theme.ElementBackground.B * 255 - 15
+	)
+	sliderBack.BorderSizePixel = 0
+	sliderBack.Parent = sliderFrame
+	
+	local sliderBackCorner = Instance.new("UICorner")
+	sliderBackCorner.CornerRadius = UDim.new(0, 3)
+	sliderBackCorner.Parent = sliderBack
+	
+	local sliderFill = Instance.new("Frame")
+	sliderFill.Size = UDim2.new(0, 0, 1, 0)
+	sliderFill.BackgroundColor3 = theme.AccentColor
+	sliderFill.BorderSizePixel = 0
+	sliderFill.Parent = sliderBack
+	
+	local sliderFillCorner = Instance.new("UICorner")
+	sliderFillCorner.CornerRadius = UDim.new(0, 3)
+	sliderFillCorner.Parent = sliderFill
+	
+	local sliderButton = Instance.new("TextButton")
+	sliderButton.Size = UDim2.new(0, 16, 0, 16)
+	sliderButton.Position = UDim2.new(0, -8, 0.5, -8)
+	sliderButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	sliderButton.BorderSizePixel = 0
+	sliderButton.Text = ""
+	sliderButton.Parent = sliderFill
+	
+	local sliderBtnCorner = Instance.new("UICorner")
+	sliderBtnCorner.CornerRadius = UDim.new(0, 8)
+	sliderBtnCorner.Parent = sliderButton
+	
+	local dragging = false
+	local currentValue = min
+	
+	local function updateSlider(value)
+		value = math.clamp(value, min, max)
+		currentValue = value
+		valueBox.Text = tostring(math.floor(value))
+		
+		local percent = (value - min) / (max - min)
+		sliderFill.Size = UDim2.new(percent, 0, 1, 0)
+		
+		if callback then
+			callback(value)
+		end
+	end
+	
+	sliderButton.MouseButton1Down:Connect(function()
+		dragging = true
+	end)
+	
+	UserInputService.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+	
+	UserInputService.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local mousePos = input.Position.X
+			local sliderPos = sliderBack.AbsolutePosition.X
+			local sliderSize = sliderBack.AbsoluteSize.X
+			
+			local percent = math.clamp((mousePos - sliderPos) / sliderSize, 0, 1)
+			local value = min + (max - min) * percent
+			updateSlider(value)
+		end
+	end)
+	
+	valueBox.FocusLost:Connect(function(enter)
+		if enter then
+			local value = tonumber(valueBox.Text)
+			if value then
+				updateSlider(value)
+			else
+				valueBox.Text = tostring(currentValue)
+			end
+		end
+	end)
+	
+	updateSlider(min)
+	
+	return {Frame = sliderFrame, SetValue = updateSlider}
+end
 
 local function CreateLoader(parent)
 	local loader = Instance.new("Frame")
@@ -486,6 +967,7 @@ function Library:Tab(title, icon, index)
 		
 		Section.Container = contentContainer
 		Section.Expanded = true
+		Section.Theme = self.Theme
 		
 		local function updateSize()
 			if Section.Expanded then
@@ -634,7 +1116,6 @@ end
 
 function Library:ScaleUI()
 	local camera = workspace.CurrentCamera
-	local viewport = camera.ViewportSize
 	
 	local scaleConstraint = Instance.new("UIScale")
 	scaleConstraint.Parent = self.MainFrame
