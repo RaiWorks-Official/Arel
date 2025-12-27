@@ -7,8 +7,8 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 
-local UIModule = require(script.Parent.Elements.UI)
-local WidgetsModule = require(script.Parent.Elements.Widgets)
+local UIModule = require(script.Parent.UI.lua)
+local WidgetsModule = require(script.Parent.Widgets.lua)
 
 local IconsModule = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/Footagesus/Icons/main/Main-v2.lua"))()
 IconsModule.SetIconsType("lucide")
