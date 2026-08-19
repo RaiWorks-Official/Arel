@@ -1,18 +1,24 @@
--- loader
--- local Players = game:GetService("Players")
-local Id = game.PlaceId
+local PlaceId = game.PlaceId
+local Repo = "https://raw.githubusercontent.com/YourUser/YourRepo/main/"
 
 local Supported = {
-  ["Legends of Speed"] = {
-    Id = ,
-    File = "LOS.luau",
-  },
+    ["Legends of Speed"] = {
+        Id = 3101667897,
+        File = "LOS.luau",
+    },
 }
 
-for i, v in ipairs(Supported) do
-  if Id == v.Id then
-    loadstring()()
-  else
-    error("Not Supported")
-  end
+local PlaceFile = nil
+
+for _, config in pairs(Supported) do
+    if config.Id == PlaceId then
+        PlaceFile = config.File
+        break
+    end
+end
+
+if PlaceFile then
+    loadstring(game:HttpGet(Repo .. PlaceFile))()
+else
+    error("Game Not Supported! Place ID: " .. tostring(PlaceId))
 end
