@@ -13,6 +13,7 @@ local Settings = {
   Auto_Gem = false,
   Auto_Hoops = false,
   Auto_Race = false, -- Werent Able to find another method
+  Auto_Rebirth = false,
 }
 
 task.spawn(function() 
@@ -79,5 +80,14 @@ task.spawn(function()
       RaceEvent:FireServer("joinRace")
     end
     task.wait(0.1)
+  end
+end)
+
+task.spawn(function() 
+  while Settings.Auto_Rebirth do
+    local RebirthEvent = RE:FindFirstChild("rebirthEvent")
+    if RebirthEvent then
+      RebirthEvent:FireServer("rebirthRequest")
+    end
   end
 end)
