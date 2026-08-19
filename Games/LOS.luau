@@ -1,4 +1,4 @@
-local VexUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/refs/heads/main/UI.lua"))()
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/refs/heads/main/UI.lua"))()
 local hoops = workspace:FindFirstChild("Hoops")
 
 local Players = game.Players
@@ -18,7 +18,7 @@ local Settings = {
   Selected_Crystal = "Red Crystal",
 }
 
-local Window = VexUI:CreateWindow({
+local Window = Library:CreateWindow({
     Name = "Cresent | Legends of Speed",
     Icon = "zap",
     SideBarWidth = 180,
