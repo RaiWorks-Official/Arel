@@ -4851,7 +4851,7 @@ function UI:CreateWindow(Config)
         MusicNext.MouseButton1Click:Connect(Music_Next)
         MusicPrev.MouseButton1Click:Connect(Music_Previous)
 
-        local PersonalTab = Window:Tab({ Title = "Personal", Icon = "music" })
+        local PersonalTab = Window:Tab({ Title = "Music Player", Icon = "music" })
 
         local TrackOptions = {}
         for _, t in ipairs(Music.tracks) do
@@ -4912,7 +4912,7 @@ function UI:CreateWindow(Config)
 
         PersonalTab:Toggle({
             Title = "Loop",
-            Desc = "Loop the playlist",
+            Desc = "Loop the Music",
             Default = false,
             Callback = function(Value)
                 Music.looped = Value
@@ -4921,7 +4921,7 @@ function UI:CreateWindow(Config)
 
         PersonalTab:Toggle({
             Title = "Shuffle",
-            Desc = "Play tracks in random order",
+            Desc = "Play Music in random order",
             Default = false,
             Callback = function(Value)
                 Music.shuffle = Value
