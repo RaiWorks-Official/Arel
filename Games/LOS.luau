@@ -1,4 +1,4 @@
--- local library = loadstring("https://github.com/RaiWorks-Official/Arel/UI.lua")()
+local VexUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/main/UI.lua"))()
 local hoops = workspace:FindFirstChild("Hoops")
 
 local Players = game.Players
@@ -15,11 +15,82 @@ local Settings = {
   Auto_Race = false, -- Werent Able to find another method
   Auto_Rebirth = false,
   Auto_Crystal = false,
-  Selected_Crystal = "none",
+  Selected_Crystal = "Red Crystal",
 }
 
+local Window = VexUI:CreateWindow({
+    Name = "Legends of Speed",
+    Icon = "zap",
+    SideBarWidth = 160,
+    Theme = "Dark",
+    Transparent = true,
+    Author = "By .s.h.ark.",
+    Music_Player = true,
+    User = {
+        Enabled = true,
+        Anonymous = true,
+    },
+})
+
+local FarmTab = Window:Tab({Title = "Farming", Icon = "zap", Border = true})
+local CrystalTab = Window:Tab({Title = "Crystals", Icon = "gem", Border = true})
+
+Window:SelectTab(1)
+
+FarmTab:Toggle({
+    Title = "Auto Orb",
+    Callback = function(Value)
+        Settings.Auto_Orb = Value
+    end
+})
+
+FarmTab:Toggle({
+    Title = "Auto Gem",
+    Callback = function(Value)
+        Settings.Auto_Gem = Value
+    end
+})
+
+FarmTab:Toggle({
+    Title = "Auto Hoops",
+    Callback = function(Value)
+        Settings.Auto_Hoops = Value
+    end
+})
+
+FarmTab:Toggle({
+    Title = "Auto Race",
+    Callback = function(Value)
+        Settings.Auto_Race = Value
+    end
+})
+
+FarmTab:Toggle({
+    Title = "Auto Rebirth",
+    Callback = function(Value)
+        Settings.Auto_Rebirth = Value
+    end
+})
+
+CrystalTab:Dropdown({
+    Title = "Select Crystal",
+    Multi = false,
+    Option = {"Red Crystal", "Blue Crystal", "Yellow Crystal", "Lightning Crystal", "Inferno Crystal", "Cyber Crystal"},
+    Value = Settings.Selected_Crystal,
+    Callback = function(Value)
+        Settings.Selected_Crystal = Value
+    end
+})
+
+CrystalTab:Toggle({
+    Title = "Auto Open Crystal",
+    Callback = function(Value)
+        Settings.Auto_Crystal = Value
+    end
+})
+
 task.spawn(function() 
-  while task.wait(0.05) do
+  while task.wait(0.1) do
     if Settings.Auto_Orb then
       local OrbEvent = RE:FindFirstChild("orbEvent")
       if OrbEvent then
@@ -41,7 +112,7 @@ task.spawn(function()
 end)
 
 task.spawn(function() 
-  while task.wait(0.05) do
+  while task.wait(0.1) do
     if Settings.Auto_Gem then
       local OrbEvent = RE:FindFirstChild("orbEvent")
       if OrbEvent then
@@ -63,7 +134,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-  while task.wait(0.05) do
+  while task.wait(0.1) do
     if Settings.Auto_Hoops then
       local char = Player.Character or Character
       local hrp = char and char:FindFirstChild("HumanoidRootPart")
