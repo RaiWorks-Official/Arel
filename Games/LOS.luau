@@ -89,5 +89,6 @@ task.spawn(function()
     if RebirthEvent then
       RebirthEvent:FireServer("rebirthRequest")
     end
+    task.wait(0.1)
   end
 end)
