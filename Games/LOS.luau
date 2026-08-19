@@ -15,6 +15,48 @@ local Settings = {
   Auto_Race = false, -- Werent Able to find another method
 }
 
+task.spawn(function() 
+  while Settings.Auto_Orb do
+    local OrbEvent = RE:FindFirstChild("orbEvent")
+    if OrbEvent then
+      OrbEvent:FireServer("collectOrb", "Red Orb", "City")
+      OrbEvent:FireServer("collectOrb", "Red Orb", "City")
+      OrbEvent:FireServer("collectOrb", "Blue Orb", "City")
+      OrbEvent:FireServer("collectOrb", "Blue Orb", "City")
+      OrbEvent:FireServer("collectOrb", "Red Orb", "Desert")
+      OrbEvent:FireServer("collectOrb", "Red Orb", "Desert")
+      OrbEvent:FireServer("collectOrb", "Blue Orb", "Desert")
+      OrbEvent:FireServer("collectOrb", "Blue Orb", "Desert")
+      OrbEvent:FireServer("collectOrb", "Red Orb", "Magma City")
+      OrbEvent:FireServer("collectOrb", "Red Orb", "Magma City")
+      OrbEvent:FireServer("collectOrb", "Blue Orb", "Magma City")
+      OrbEvent:FireServer("collectOrb", "Blue Orb", "Magma City")
+    end
+    task.wait()
+  end
+end)
+
+task.spawn(function() 
+  while Settings.Auto_Gem do
+    local OrbEvent = RE:FindFirstChild("orbEvent")
+    if OrbEvent then
+      OrbEvent:FireServer("collectOrb", "Gem", "City")
+      OrbEvent:FireServer("collectOrb", "Gem", "City")
+      OrbEvent:FireServer("collectOrb", "Gem", "City")
+      OrbEvent:FireServer("collectOrb", "Gem", "City")
+      OrbEvent:FireServer("collectOrb", "Gem", "Desert")
+      OrbEvent:FireServer("collectOrb", "Gem", "Desert")
+      OrbEvent:FireServer("collectOrb", "Gem", "Desert")
+      OrbEvent:FireServer("collectOrb", "Gem", "Desert")
+      OrbEvent:FireServer("collectOrb", "Gem", "Magma City")
+      OrbEvent:FireServer("collectOrb", "Gem", "Magma City")
+      OrbEvent:FireServer("collectOrb", "Gem", "Magma City")
+      OrbEvent:FireServer("collectOrb", "Gem", "Magma City")
+    end
+    task.wait()
+  end
+end)
+
 task.spawn(function()
   while Settings.Auto_Hoops do
     if hoops and Character and Character:FindFirstChild("HumanoidRootPart") then
