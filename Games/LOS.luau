@@ -15,7 +15,7 @@ local Settings = {
   Auto_Race = false, -- Werent Able to find another method
   Auto_Rebirth = false,
   Auto_Crystal = false,
-  Selected_Crystal = "Red Crystal",
+  Selected_Crystal = "none",
 }
 
 task.spawn(function() 
