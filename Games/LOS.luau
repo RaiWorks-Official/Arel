@@ -1,4 +1,4 @@
-local VexUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/main/UI.lua"))()
+local VexUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/refs/heads/main/UI.lua"))()
 local hoops = workspace:FindFirstChild("Hoops")
 
 local Players = game.Players
