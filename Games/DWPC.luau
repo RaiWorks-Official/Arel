@@ -11,5 +11,8 @@ local Settings = {
   Auto_Click = false,
   Auto_Drain = false,
   Auto_Rebirth = false,
-  Auto_Collect = false, 
+  Auto_Collect_Fish = false, -- fih
+  Auto_Collect = false,
+
+  Auto_Sell = false
 }
