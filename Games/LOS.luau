@@ -19,7 +19,7 @@ local Settings = {
 }
 
 task.spawn(function() 
-  while task.wait(0.1) do
+  while task.wait(0.05) do
     if Settings.Auto_Orb then
       local OrbEvent = RE:FindFirstChild("orbEvent")
       if OrbEvent then
@@ -41,7 +41,7 @@ task.spawn(function()
 end)
 
 task.spawn(function() 
-  while task.wait(0.1) do
+  while task.wait(0.05) do
     if Settings.Auto_Gem then
       local OrbEvent = RE:FindFirstChild("orbEvent")
       if OrbEvent then
@@ -63,7 +63,7 @@ task.spawn(function()
 end)
 
 task.spawn(function()
-  while task.wait(0.1) do
+  while task.wait(0.05) do
     if Settings.Auto_Hoops then
       local char = Player.Character or Character
       local hrp = char and char:FindFirstChild("HumanoidRootPart")
