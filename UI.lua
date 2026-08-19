@@ -6,7 +6,7 @@ function Utility:TweenObject(obj, properties, duration, ...)
 end
 
 local activeNotifs = 0
-local UI, VexUI = {
+local UI, CresentUI = {
     Theme = nil,
     Themes = {},
     Notifications = 0,
@@ -16,7 +16,7 @@ local UI, VexUI = {
     Objects = {},
 }
 
-VexUI.DefaultProps = {
+CresentUI.DefaultProps = {
     TextButton = {
         AutoButtonColor = false,
         TextTransparency = 1,
@@ -47,7 +47,7 @@ VexUI.DefaultProps = {
     },
 }
 
-VexUI.Themes = {
+CresentUI.Themes = {
     Dark = {
         Name = "Dark",
         Background = Color3.fromRGB(12, 12, 12),
@@ -90,12 +90,12 @@ VexUI.Themes = {
     },
 }
 
-UI.Theme = VexUI.Themes["Dark"]
+UI.Theme = CresentUI.Themes["Dark"]
 
-function VexUI:Create(class, properties, children)
+function CresentUI:Create(class, properties, children)
     local inst = Instance.new(class)
 
-    local defaults = VexUI.DefaultProps[class]
+    local defaults = CresentUI.DefaultProps[class]
     if defaults then
         for prop, val in next, defaults do
             if properties[prop] == nil then
@@ -115,13 +115,13 @@ function VexUI:Create(class, properties, children)
     end
 
     if properties.ThemeID then
-        VexUI:AddThemeObject(inst, properties.ThemeID)
+        CresentUI:AddThemeObject(inst, properties.ThemeID)
     end
     return inst
 end
 
 
-function VexUI:GetThemeProperty(property, theme, fallbackProperty)
+function CresentUI:GetThemeProperty(property, theme, fallbackProperty)
     local function resolve(t, key)
         for _, part in ipairs(string.split(key, ".")) do
             if type(t) ~= "table" then return nil end
@@ -131,23 +131,23 @@ function VexUI:GetThemeProperty(property, theme, fallbackProperty)
     end
 
     return resolve(theme, property) 
-        or resolve(VexUI.Themes["Dark"], property)
-        or (fallbackProperty and (resolve(theme, fallbackProperty) or resolve(VexUI.Themes["Dark"], fallbackProperty)))
+        or resolve(CresentUI.Themes["Dark"], property)
+        or (fallbackProperty and (resolve(theme, fallbackProperty) or resolve(CresentUI.Themes["Dark"], fallbackProperty)))
 end
 
-function VexUI:AddThemeObject(object, properties)
-    VexUI.Objects[object] = { Object = object, Properties = properties }
-    VexUI:UpdateTheme(object, false)
+function CresentUI:AddThemeObject(object, properties)
+    CresentUI.Objects[object] = { Object = object, Properties = properties }
+    CresentUI:UpdateTheme(object, false)
     return object
 end
 
-function VexUI:UpdateTheme(targetObject, isTween)
+function CresentUI:UpdateTheme(targetObject, isTween)
     local function ApplyTheme(objData)
         for property, colorKey in pairs(objData.Properties or {}) do
             local color = nil
             for _, key in ipairs(string.split(colorKey, "|")) do
                 key = key:gsub("%s+", "")
-                color = VexUI:GetThemeProperty(key, UI.Theme)
+                color = CresentUI:GetThemeProperty(key, UI.Theme)
                 if color then break end
             end
 
@@ -162,39 +162,39 @@ function VexUI:UpdateTheme(targetObject, isTween)
     end
 
     if targetObject then
-        local objData = VexUI.Objects[targetObject]
+        local objData = CresentUI.Objects[targetObject]
         if objData then ApplyTheme(objData) end
     else
-        for _, objData in pairs(VexUI.Objects) do
+        for _, objData in pairs(CresentUI.Objects) do
             ApplyTheme(objData)
         end
     end
 end
 
-function VexUI:SetTheme(themeName)
-    local theme = VexUI.Themes[themeName]
+function CresentUI:SetTheme(themeName)
+    local theme = CresentUI.Themes[themeName]
     if not theme then
         warn("Theme '" .. tostring(themeName) .. "' not found.")
         return
     end
 
     UI.Theme = theme
-    VexUI:UpdateTheme(nil, true)
+    CresentUI:UpdateTheme(nil, true)
 end
 
 function UI:AddTheme(i)
-    VexUI.Themes[i.Name] = i
+    CresentUI.Themes[i.Name] = i
     return i
 end
 
 function Utility:GlassStroke(themeKey, thickness)
-    return VexUI:Create("UIStroke", {
+    return CresentUI:Create("UIStroke", {
         Color = Color3.fromRGB(255, 255, 255),
         LineJoinMode = "Round",
         Thickness = thickness or 0.6,
         ThemeID = { Color = themeKey or "Outline" }
     }, {
-        VexUI:Create("UIGradient", {
+        CresentUI:Create("UIGradient", {
             Color = ColorSequence.new(
                 Color3.fromRGB(255, 255, 255),
                 Color3.fromRGB(255, 255, 255)
@@ -211,14 +211,14 @@ end
 
 function Utility:Padding(a, b, c, d)
     if type(a) == "table" then
-        return VexUI:Create("UIPadding", {
+        return CresentUI:Create("UIPadding", {
             PaddingTop = UDim.new(0, a.top or 0),
             PaddingBottom = UDim.new(0, a.bottom or 0),
             PaddingLeft = UDim.new(0, a.left or 0),
             PaddingRight = UDim.new(0, a.right or 0),
         })
     end
-    return VexUI:Create("UIPadding", {
+    return CresentUI:Create("UIPadding", {
         PaddingTop = UDim.new(0, a or 0),
         PaddingBottom = UDim.new(0, b or a or 0),
         PaddingLeft = UDim.new(0, c or a or 0),
@@ -227,7 +227,7 @@ function Utility:Padding(a, b, c, d)
 end
 
 function Utility:ListLayout(dir, padding, align)
-    return VexUI:Create("UIListLayout", {
+    return CresentUI:Create("UIListLayout", {
         FillDirection = (dir == "H") and Enum.FillDirection.Horizontal or Enum.FillDirection.Vertical,
         SortOrder = Enum.SortOrder.LayoutOrder,
         Padding = UDim.new(0, padding or 5),
@@ -278,7 +278,7 @@ function Utility:ElText(parent, title, desc, scope)
 end
 
 function Utility:Element(RightScroll, ElementFrame, sizeY, scope)
-    local Beeee = VexUI:Create("Frame", {
+    local Beeee = CresentUI:Create("Frame", {
         Parent = RightScroll,
         BackgroundTransparency = 1,
         AutomaticSize = "Y",
@@ -286,7 +286,7 @@ function Utility:Element(RightScroll, ElementFrame, sizeY, scope)
         ZIndex = 15,
     })
 
-    local Card = VexUI:Create("Frame", {
+    local Card = CresentUI:Create("Frame", {
         Parent = Beeee,
         AutomaticSize = "Y",
         ClipsDescendants = true,
@@ -297,13 +297,13 @@ function Utility:Element(RightScroll, ElementFrame, sizeY, scope)
         ThemeID = { BackgroundColor3 = Utility:T(scope, "Background", "ElementColor") }
     }, {
         Utility:GlassStroke(),
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 12),
         }),
         Utility:Padding({ top = 5, bottom = 5 }),
     })
 
-    local Inner = VexUI:Create("Frame", {
+    local Inner = CresentUI:Create("Frame", {
         Parent = Card,
         BackgroundTransparency = 1,
         Size = UDim2.new(1, 0, 1, 0),
@@ -381,7 +381,7 @@ end
 function LockedElm(Frame, Stat)
     local LockFrame = Frame:FindFirstChild("Lock")
     if not LockFrame then
-        LockFrame = VexUI:Create("Frame", {
+        LockFrame = CresentUI:Create("Frame", {
             Name = "Lock",
             BackgroundTransparency = 0.2,
             AutomaticSize = "XY",
@@ -393,11 +393,11 @@ function LockedElm(Frame, Stat)
                 BackgroundColor3 = "Background"
             }
         },{
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0,12)
             })
         })
-        VexUI:Create("ImageLabel", {
+        CresentUI:Create("ImageLabel", {
             BackgroundTransparency = 1,
             Size = UDim2.new(0,20, 0,20),
             AnchorPoint = Vector2.new(0.5, 0.5),
@@ -412,7 +412,7 @@ function LockedElm(Frame, Stat)
 end
 
 function Text(parent, text, textProps, children)
-    local container = VexUI:Create("Frame", {
+    local container = CresentUI:Create("Frame", {
         BackgroundTransparency = textProps.BackgroundTransparency or 1,
         AutomaticSize = textProps.AutomaticSize or "XY",
         Size = textProps.Size or UDim2.new(),
@@ -422,7 +422,7 @@ function Text(parent, text, textProps, children)
         Visible = textProps.Visible ~= false,
         Parent = textProps.Parent or parent,
     }, {
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UIListLayout", {
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 2),
         })
@@ -440,7 +440,7 @@ function Text(parent, text, textProps, children)
     end
 
     local function CreateText(str, layoutOrder, parentRow)
-        return VexUI:Create("TextLabel", {
+        return CresentUI:Create("TextLabel", {
             BackgroundTransparency = 1,
             AutomaticSize = "XY",
             Size = UDim2.new(),
@@ -465,7 +465,7 @@ function Text(parent, text, textProps, children)
             --warn("IconsV2: Icon Not Found — " .. name)
         end
 
-        local img = VexUI:Create("ImageLabel", {
+        local img = CresentUI:Create("ImageLabel", {
             BackgroundTransparency = 1,
             Size = UDim2.new(0, textProps.TextSize or 13, 0, textProps.TextSize or 13),
             LayoutOrder = layoutOrder,
@@ -502,7 +502,7 @@ function Text(parent, text, textProps, children)
         newText = (newText or ""):gsub("\n", "\\n")
 
         for lineIndex, line in ipairs(string.split(newText, "\\n")) do
-            local row = VexUI:Create("Frame", {
+            local row = CresentUI:Create("Frame", {
                 BackgroundTransparency = 1,
                 AutomaticSize = "XY",
                 ClipsDescendants = true,
@@ -510,7 +510,7 @@ function Text(parent, text, textProps, children)
                 LayoutOrder = lineIndex,
                 Parent = container,
             }, {
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     FillDirection = Enum.FillDirection.Horizontal,
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -546,13 +546,13 @@ function Text(parent, text, textProps, children)
     }
 end
 
-    local UIScreen = VexUI:Create("ScreenGui", {
+    local UIScreen = CresentUI:Create("ScreenGui", {
         Parent = game:GetService("CoreGui"),
         --ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         ResetOnSpawn = false,
     })
 
-    local Island = VexUI:Create("Frame", {
+    local Island = CresentUI:Create("Frame", {
         Parent = UIScreen,
         BorderSizePixel = 0,
         Size = UDim2.new(0, 30, 0, 36), 
@@ -563,14 +563,14 @@ end
             BackgroundColor3 = "Background"
         }
     },{
-        VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
+        CresentUI:Create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
             HorizontalAlignment = "Left",
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 3),
         }),
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingTop = UDim.new(0, 3),
             PaddingLeft = UDim.new(0, 2),
             PaddingRight = UDim.new(0, 2),
@@ -586,7 +586,7 @@ end
 
 function UI:CreateWindow(Config)
     local Window = {
-        Name = Config.Name or "VexUI",
+        Name = Config.Name or "CresentUI",
         Author = Config.Author or nil,
         Icon = Config.Icon or nil,
         ToggleKey = Config.ToggleKey or Enum.KeyCode.F,
@@ -601,7 +601,7 @@ function UI:CreateWindow(Config)
             Height = Config.Height or 35,
         },
         OnDestroy = Config.OnDestroy or function() end,
-        Themes = VexUI.Themes,
+        Themes = CresentUI.Themes,
         Size = Config.Size and UDim2.new(
             0, math.clamp(Config.Size.X.Offset, 420, 580),
             0, math.clamp(Config.Size.Y.Offset, 280, 450)
@@ -620,21 +620,21 @@ function UI:CreateWindow(Config)
 
     function Window:SetTheme(themeName)
         Window.Theme = themeName
-        local theme = VexUI.Themes[themeName]
+        local theme = CresentUI.Themes[themeName]
         if not theme then
             warn("Theme '" .. tostring(themeName) .. "' not found.")
             return
         end
         
         UI.Theme = theme
-        VexUI:UpdateTheme(nil, true)
+        CresentUI:UpdateTheme(nil, true)
     end
 
     Window:SetTheme(Window.Theme)
 
     --UIMinimized
     local Main
-    local MinzUI = VexUI:Create("TextButton", {
+    local MinzUI = CresentUI:Create("TextButton", {
         Parent = Island,
         LayoutOrder = 1,
         Size = UDim2.new(0, 0, 0, 30), --X 80
@@ -649,30 +649,30 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "SideBar"
         }
     },{
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0, 5),
             --PaddingTop = UDim.new(0, 5),
             PaddingRight = UDim.new(0, 5),
         }),
-        VexUI:Create("UIStroke", {Parent = ButtonModule,
+        CresentUI:Create("UIStroke", {Parent = ButtonModule,
             Parent = MinimizedFrame,
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 1,
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Rotation = 45,
                 Transparency = NumberSequence.new(0),
             })
         }),
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
             HorizontalAlignment = "Left",
             VerticalAlignment = Enum.VerticalAlignment.Center,
         }),
-        VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
-        VexUI:Create("TextLabel", {
+        CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
+        CresentUI:Create("TextLabel", {
             BackgroundTransparency = 1,
             AnchorPoint = Vector2.new(0, 0.5),
             Position = UDim2.new(0, 0, 0.5, 0),
@@ -689,12 +689,12 @@ function UI:CreateWindow(Config)
                 TextColor3 = "Text"
             }
         },{
-            VexUI:Create("UIListLayout", {
+            CresentUI:Create("UIListLayout", {
                 FillDirection = Enum.FillDirection.Horizontal,
                 HorizontalAlignment = "Left",
                 VerticalAlignment = Enum.VerticalAlignment.Center,
             }),
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingLeft = UDim.new(0, 5),
             })
         }),
@@ -702,7 +702,7 @@ function UI:CreateWindow(Config)
 
     local UIIcon
     if Window.Icon then
-        UIIcon = VexUI:Create("ImageLabel", {
+        UIIcon = CresentUI:Create("ImageLabel", {
             AnchorPoint = Vector2.new(0, 0.5),
             Image = GetIcon(Window.Icon),
             BackgroundTransparency = 1,
@@ -752,7 +752,7 @@ function UI:CreateWindow(Config)
     end
 
     if Window.KeySystem and Window.KeySystem.KeyValidator then
-        local KeyFrame = VexUI:Create("Frame", {
+        local KeyFrame = CresentUI:Create("Frame", {
             Parent = UIScreen,
             Size = UDim2.new(0, 220, 0, 85),
             ClipsDescendants = true,
@@ -764,10 +764,10 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Background"
             }
         }, {
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
-            VexUI:Create("Frame", {
+            CresentUI:Create("Frame", {
                 Size = UDim2.new(0, 94, 0, 26),
                 ClipsDescendants = true,
                 Active = true,
@@ -778,10 +778,10 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "SideBar"
                 },
             }, {
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 16),
                 }),
-                VexUI:Create("TextBox", {
+                CresentUI:Create("TextBox", {
                     BackgroundTransparency = 1,
                     ClipsDescendants = true,
                     ClearTextOnFocus = true,
@@ -796,11 +796,11 @@ function UI:CreateWindow(Config)
                         TextColor3 = "Text",
                     }
                 }, {
-                    VexUI:Create("UIPadding", {
+                    CresentUI:Create("UIPadding", {
                         PaddingLeft = UDim.new(0, 5),
                     })
                 }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UIStroke", {
                     Color = Color3.fromRGB(255, 255, 255),
                     LineJoinMode = "Round",
                     Thickness = 0.6,
@@ -808,7 +808,7 @@ function UI:CreateWindow(Config)
                         Color = "Outline"
                     }
                 },{
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(
                             Color3.fromRGB(255, 255, 255), 
                             Color3.fromRGB(255, 255, 255)
@@ -823,9 +823,9 @@ function UI:CreateWindow(Config)
                 }),
             })
         })
-        if not isfolder("VexUI/" .. (Window.Folder or "Temp")) then makefolder("VexUI/" .. (Window.Folder or "Temp")) end
-        if isfile("VexUI/" .. (Window.Folder or "Temp") .. "/key.json") then
-            KeyFrame.Frame.TextBox.Text = game:GetService("HttpService"):JSONDecode(readfile("VexUI/" .. (Window.Folder or "Temp") .. "/key.json")).key or ""
+        if not isfolder("CresentUI/" .. (Window.Folder or "Temp")) then makefolder("CresentUI/" .. (Window.Folder or "Temp")) end
+        if isfile("CresentUI/" .. (Window.Folder or "Temp") .. "/key.json") then
+            KeyFrame.Frame.TextBox.Text = game:GetService("HttpService"):JSONDecode(readfile("CresentUI/" .. (Window.Folder or "Temp") .. "/key.json")).key or ""
         end
 
         if Window.KeySystem.Title then
@@ -846,7 +846,7 @@ function UI:CreateWindow(Config)
                 }
             })
         end
-        local Kframe1 = VexUI:Create("Frame", {
+        local Kframe1 = CresentUI:Create("Frame", {
             Size = UDim2.new(0, 118, 0, 85),
             ClipsDescendants = true,
             Active = true,
@@ -857,10 +857,10 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "SideBar"
             }
         }, {
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
-            VexUI:Create("Frame", {
+            CresentUI:Create("Frame", {
                 Size = UDim2.new(0, 0, 0, 25), --x 55
                 AnchorPoint = Vector2.new(0.95, 0.03),
                 --BackgroundTransparency = 1,
@@ -874,21 +874,21 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Background"
                 }
             },{
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     FillDirection = Enum.FillDirection.Horizontal,
                     HorizontalAlignment = "Right",
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 3),
                 }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 5),
                     PaddingRight = UDim.new(0, 5),
                     PaddingTop = UDim.new(0, 3),
                 }),
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 16),
                 }),
-                VexUI:Create("ImageButton", {
+                CresentUI:Create("ImageButton", {
                     Name = "Cross",
                     AnchorPoint = Vector2.new(0, 0.5),
                     Image = IconsV2.GetIcon("x"),
@@ -902,7 +902,7 @@ function UI:CreateWindow(Config)
                         ImageColor3 = "IconColor"
                     }
                 }),
-                --[[VexUI:Create("ImageButton", {
+                --[[CresentUI:Create("ImageButton", {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Image = IconsV2.GetIcon("minus"),
                     BackgroundTransparency = 1,
@@ -915,13 +915,13 @@ function UI:CreateWindow(Config)
                         ImageColor3 = "IconColor"
                     }
                 }),--]]
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     --PaddingLeft = UDim.new(0, 5),
                     --PaddingRight = UDim.new(0, 5),
                     PaddingTop = UDim.new(0, 4),
                 }),
             }),
-            VexUI:Create("Frame", {
+            CresentUI:Create("Frame", {
                 Size = UDim2.new(0, 16, 1, 0),
                 Active = true,
                 ZIndex = 100,
@@ -952,7 +952,7 @@ function UI:CreateWindow(Config)
                 }
             })
         end
-        local Kframe2 = VexUI:Create("Frame", {
+        local Kframe2 = CresentUI:Create("Frame", {
             Parent = Kframe1,
             Size = UDim2.new(1, 0, 0, 20),
             AnchorPoint = Vector2.new(0, 0.5),
@@ -964,17 +964,17 @@ function UI:CreateWindow(Config)
             BorderSizePixel = 0,
             ZIndex = 100,
             },{
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     FillDirection = Enum.FillDirection.Horizontal,
                     HorizontalAlignment = "Left",
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 3),
                 }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 5),
                 }),
         })
-        local Abutton = VexUI:Create("TextButton", {
+        local Abutton = CresentUI:Create("TextButton", {
             Parent = Kframe2,
             TextSize = 12,
             Size = UDim2.new(0, 57, 0, 20),
@@ -988,7 +988,7 @@ function UI:CreateWindow(Config)
                 TextColor3 = "Text",
             },
         },{
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
         })
@@ -1004,7 +1004,7 @@ function UI:CreateWindow(Config)
                 valid = ok and result == true
             end
             if valid then
-                writefile("VexUI/" .. (Window.Folder or "Temp") .. "/key.json",
+                writefile("CresentUI/" .. (Window.Folder or "Temp") .. "/key.json",
                     game:GetService("HttpService"):JSONEncode({ key = inputKey })
                 )
                 Abutton.Text = "Success"
@@ -1017,7 +1017,7 @@ function UI:CreateWindow(Config)
                 Abutton.Text = "Apply"
             end
         end)
-        local Gbutton = VexUI:Create("TextButton", {
+        local Gbutton = CresentUI:Create("TextButton", {
             Parent = Kframe2,
             TextSize = 12,
             Size = UDim2.new(0, 48, 0, 20),
@@ -1031,7 +1031,7 @@ function UI:CreateWindow(Config)
                 TextColor3 = "Text",
             },
         },{
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
         })
@@ -1046,7 +1046,7 @@ function UI:CreateWindow(Config)
         coroutine.yield()
     end
 
-    local Main = VexUI:Create("Frame", {
+    local Main = CresentUI:Create("Frame", {
         Name = Window.Name,
         Size = UDim2.new(0, Window.Size.X.Offset, 0, Window.Size.Y.Offset),
         ClipsDescendants = true,
@@ -1062,10 +1062,10 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "Background"
         }
     }, {
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("Frame", {
+        CresentUI:Create("Frame", {
             Size = UDim2.new(0, Window.Size.X.Offset, 0, Window.Size.Y.Offset-8),--Window.Topbar.Height),
             --ClipsDescendants = true,
             BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -1075,22 +1075,22 @@ function UI:CreateWindow(Config)
             BorderSizePixel = 0,
             ZIndex = 2,
         }, {
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingLeft = UDim.new(0, 5),
             }),
-            VexUI:Create("UIListLayout", {
+            CresentUI:Create("UIListLayout", {
                 FillDirection = Enum.FillDirection.Horizontal,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 5),
             }),
         }),
-        VexUI:Create("UIScale", {
+        CresentUI:Create("UIScale", {
             Scale = 1,
         }),
     })
     enableDragging(Main)
 
-    local TopBarF1 = VexUI:Create("Frame", {
+    local TopBarF1 = CresentUI:Create("Frame", {
         Parent = Main.Frame,
         Size = UDim2.new(0, Window.Size.X.Offset - 182 + 133 + 5, 0, Window.Topbar.Height), --Window.Size.X.Offset - 10 + 133 + 5
         --ClipsDescendants = true,
@@ -1104,10 +1104,10 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "SideBar"
         }
     }, {
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("UIStroke", {
+        CresentUI:Create("UIStroke", {
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 0.6,
@@ -1115,7 +1115,7 @@ function UI:CreateWindow(Config)
                 Color = "Outline"
             }
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Color = ColorSequence.new(
                     Color3.fromRGB(255, 255, 255), 
                     Color3.fromRGB(255, 255, 255)
@@ -1128,7 +1128,7 @@ function UI:CreateWindow(Config)
                 Rotation = -110
             })
         }),
-        VexUI:Create("Frame", {
+        CresentUI:Create("Frame", {
             Size = UDim2.new(1, 0, 1, 0),
             --ClipsDescendants = true,
             BackgroundColor3 = Color3.fromRGB(33, 33, 33),
@@ -1138,7 +1138,7 @@ function UI:CreateWindow(Config)
             BorderSizePixel = 0,
             ZIndex = 3,
         }, {
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 --PaddingLeft = UDim.new(0, 5),
                 PaddingRight = UDim.new(0, 0),
                 PaddingTop = UDim.new(0, 0),
@@ -1147,7 +1147,7 @@ function UI:CreateWindow(Config)
     })
     TopBarF1.Size = UDim2.new(0,Window.Size.X.Offset - 5 - 5 - 5- 187,0,Window.Topbar.Height)
 
-    local LibName = VexUI:Create("TextLabel", {
+    local LibName = CresentUI:Create("TextLabel", {
         Parent = TopBarF1.Frame,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -1166,13 +1166,13 @@ function UI:CreateWindow(Config)
             TextColor3 = "Text"
         }
     }, {
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0, Window.Icon and 45 or 12),
             PaddingTop = Window.Author and UDim.new(0, 6) or UDim.new(0, 0),
         })
     })
 
-    local LibAuthor = VexUI:Create("TextLabel", {
+    local LibAuthor = CresentUI:Create("TextLabel", {
         Parent = TopBarF1.Frame,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -1192,14 +1192,14 @@ function UI:CreateWindow(Config)
             TextColor3 = "Text"
         }
     }, {
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0, Window.Icon and 45 or 12),
             PaddingTop = UDim.new(0, 13),
         })
     })
 
     if Window.Icon then
-        local UIIcon = VexUI:Create("ImageLabel", {
+        local UIIcon = CresentUI:Create("ImageLabel", {
             AnchorPoint = Vector2.new(0, 0.5),
             Image = GetIcon(Window.Icon),
             BackgroundTransparency = 1,
@@ -1213,7 +1213,7 @@ function UI:CreateWindow(Config)
         })
     end
 
-    local TopBarF2 = VexUI:Create("Frame", {
+    local TopBarF2 = CresentUI:Create("Frame", {
         Parent = Main.Frame,
         Size = UDim2.new(0, 133, 0, Window.Topbar.Height),
         ClipsDescendants = true,
@@ -1228,10 +1228,10 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "SideBar"
         }
     }, {
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("UIStroke", {
+        CresentUI:Create("UIStroke", {
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 0.6,
@@ -1239,7 +1239,7 @@ function UI:CreateWindow(Config)
                 Color = "Outline"
             }
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Color = ColorSequence.new(
                     Color3.fromRGB(255, 255, 255), 
                     Color3.fromRGB(255, 255, 255)
@@ -1252,20 +1252,20 @@ function UI:CreateWindow(Config)
                 Rotation = -110
             })
         }),
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
             HorizontalAlignment = "Right",
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 5),
         }),
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             --PaddingLeft = UDim.new(0, 5),
             PaddingRight = UDim.new(0, 5),
             PaddingTop = UDim.new(0, 4),
         }),
     })
 
-    local TopBarF3 = VexUI:Create("Frame", {
+    local TopBarF3 = CresentUI:Create("Frame", {
         Parent = Main.Frame,
         Size = UDim2.new(0, 187, 0, Window.Topbar.Height),
         --ClipsDescendants = true,
@@ -1279,10 +1279,10 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "SideBar"
         }
     }, {
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("UIStroke", {
+        CresentUI:Create("UIStroke", {
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 0.6,
@@ -1290,7 +1290,7 @@ function UI:CreateWindow(Config)
                 Color = "Outline"
             }
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Color = ColorSequence.new(
                     Color3.fromRGB(255, 255, 255), 
                     Color3.fromRGB(255, 255, 255)
@@ -1315,7 +1315,7 @@ function UI:CreateWindow(Config)
             Count = 0,
         }
 
-        local Overlay = VexUI:Create("Frame", {
+        local Overlay = CresentUI:Create("Frame", {
             Parent = Main,
             Size = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = 0.1,
@@ -1325,12 +1325,12 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Background"
             }
         }, {
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
         })
 
-        local DialogFrame = VexUI:Create("Frame", {
+        local DialogFrame = CresentUI:Create("Frame", {
             Parent = Overlay,
             AnchorPoint = Vector2.new(0.5, 0.5),
             Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -1343,15 +1343,15 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Dialog.Background|SideBar"
             }
         }, {
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
-            VexUI:Create("UIListLayout", {
+            CresentUI:Create("UIListLayout", {
                 FillDirection = Enum.FillDirection.Vertical,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 6),
             }),
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingTop = UDim.new(0, 10),
                 PaddingBottom = UDim.new(0, 10),
                 PaddingLeft = UDim.new(0, 10),
@@ -1364,7 +1364,7 @@ function UI:CreateWindow(Config)
 
         local Image
         if Dialog.Image then
-            Image = VexUI:Create("ImageLabel", {
+            Image = CresentUI:Create("ImageLabel", {
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 0),
@@ -1373,7 +1373,7 @@ function UI:CreateWindow(Config)
                 ScaleType = "Crop",
                 Parent = DialogFrame,
             }, {
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 16),
                 }),
             })
@@ -1422,7 +1422,7 @@ function UI:CreateWindow(Config)
         end
 
         if Dialog.Buttons then
-            local ButtonsFrame = VexUI:Create("Frame", {
+            local ButtonsFrame = CresentUI:Create("Frame", {
                 Parent = DialogFrame,
                 LayoutOrder = 3,
                 Size = UDim2.new(1, 0, 0, 0),
@@ -1430,7 +1430,7 @@ function UI:CreateWindow(Config)
                 BackgroundTransparency = 1,
                 ZIndex = 1002,
             }, {
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     FillDirection = Enum.FillDirection.Vertical,
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 6),
@@ -1443,14 +1443,14 @@ function UI:CreateWindow(Config)
             end
 
             for rowIndex, Row in ipairs(Rows) do
-                local RowFrame = VexUI:Create("Frame", {
+                local RowFrame = CresentUI:Create("Frame", {
                     Parent = ButtonsFrame,
                     LayoutOrder = rowIndex,
                     Size = UDim2.new(1, 0, 0, 30),
                     BackgroundTransparency = 1,
                     ZIndex = 1002,
                 }, {
-                    VexUI:Create("UIListLayout", {
+                    CresentUI:Create("UIListLayout", {
                         FillDirection = Enum.FillDirection.Horizontal,
                         SortOrder = Enum.SortOrder.LayoutOrder,
                         Padding = UDim.new(0, 6),
@@ -1474,7 +1474,7 @@ function UI:CreateWindow(Config)
                         Width = UDim2.new(0.5, -3, 1, 0)
                     end
 
-                    local Button = VexUI:Create("TextButton", {
+                    local Button = CresentUI:Create("TextButton", {
                         Parent = RowFrame,
                         LayoutOrder = colIndex,
                         Size = Width,
@@ -1486,10 +1486,10 @@ function UI:CreateWindow(Config)
                             BackgroundColor3 = "Dialog.Button|ElementColor"
                         }
                     }, {
-                        VexUI:Create("UICorner", {
+                        CresentUI:Create("UICorner", {
                             CornerRadius = UDim.new(0, 10),
                         }),
-                        VexUI:Create("TextLabel", {
+                        CresentUI:Create("TextLabel", {
                             BackgroundTransparency = 1,
                             Size = UDim2.new(1, 0, 1, 0),
                             FontFace = Font.new([[rbxassetid://12187365364]], Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
@@ -1538,7 +1538,7 @@ function UI:CreateWindow(Config)
             Callback = Config.Callback or function() end,
             Order = Config.Order or 1,
         }
-        local TopButton = VexUI:Create("Frame", {
+        local TopButton = CresentUI:Create("Frame", {
             Parent = TopBarF2,
             Size = UDim2.new(0, 27, 0, 27),
             BackgroundTransparency = 0.6,
@@ -1553,10 +1553,10 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Background"
             }
         }, {
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 8),
             }),
-            VexUI:Create("UIStroke", {
+            CresentUI:Create("UIStroke", {
                 Color = Color3.fromRGB(255, 255, 255),
                 LineJoinMode = "Round",
                 Thickness = 0.6,
@@ -1564,7 +1564,7 @@ function UI:CreateWindow(Config)
                     Color = "Outline"
                 }
             },{
-                VexUI:Create("UIGradient", {
+                CresentUI:Create("UIGradient", {
                     Color = ColorSequence.new(
                         Color3.fromRGB(255, 255, 255), 
                         Color3.fromRGB(255, 255, 255)
@@ -1578,7 +1578,7 @@ function UI:CreateWindow(Config)
                 })
             }),
         })
-        local Icon = VexUI:Create("ImageButton", {
+        local Icon = CresentUI:Create("ImageButton", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Image = GetIcon(TopBarButton.Icon),
             BackgroundTransparency = 1,
@@ -1619,7 +1619,7 @@ function UI:CreateWindow(Config)
             EnableBackground = Config.EnableBackground or nil,
             DisableBackground = Config.DisableBackground or nil,
         }
-        local TopToggle = VexUI:Create("Frame", {
+        local TopToggle = CresentUI:Create("Frame", {
             Parent = TopBarF2,
             Size = UDim2.new(0, 27, 0, 27),
             BackgroundTransparency = 0.6,
@@ -1634,10 +1634,10 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Background"
             }
         }, {
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 8),
             }),
-            VexUI:Create("UIStroke", {
+            CresentUI:Create("UIStroke", {
                 Color = Color3.fromRGB(255, 255, 255),
                 LineJoinMode = "Round",
                 Thickness = 0.6,
@@ -1645,7 +1645,7 @@ function UI:CreateWindow(Config)
                     Color = "Outline"
                 }
             },{
-                VexUI:Create("UIGradient", {
+                CresentUI:Create("UIGradient", {
                     Color = ColorSequence.new(
                         Color3.fromRGB(255, 255, 255), 
                         Color3.fromRGB(255, 255, 255)
@@ -1659,7 +1659,7 @@ function UI:CreateWindow(Config)
                 })
             }),
         })
-        local Icon = VexUI:Create("ImageButton", {
+        local Icon = CresentUI:Create("ImageButton", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             Image = GetIcon(TopBarToggle.Icon),
             BackgroundTransparency = 1,
@@ -1698,7 +1698,7 @@ function UI:CreateWindow(Config)
 
         local TagFrame = Main:FindFirstChild("TagFrame")
         if not TagFrame and Tags > 0 then
-            TagFrame = VexUI:Create("Frame", {
+            TagFrame = CresentUI:Create("Frame", {
                 Name = "TagFrame",
                 Parent = Main,
                 AnchorPoint = Vector2.new(.97, 1),
@@ -1711,16 +1711,16 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "SideBar"
                 },
             },{
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0,16)
                 }),
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     HorizontalAlignment = "Left",
                     FillDirection = Enum.FillDirection.Horizontal,
                     Padding = UDim.new(0, 5)
                 }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 5),
                     PaddingTop = UDim.new(0, 5),
                 })
@@ -1733,7 +1733,7 @@ function UI:CreateWindow(Config)
             Color = Config.Color,
             Corner = Config.Corner or 16,
         }
-        local TagF = VexUI:Create("Frame", {
+        local TagF = CresentUI:Create("Frame", {
             Parent = TagFrame,
             Size = UDim2.new(0, 20, 0, 25),
             AutomaticSize = "X",
@@ -1742,15 +1742,15 @@ function UI:CreateWindow(Config)
             ZIndex = 201,
             BackgroundColor3 = Tag.Color or Color3.fromRGB(255, 255, 255),
         },{
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, Tag.Corner)
             }),
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingLeft = UDim.new(0, 5),
                 PaddingRight = UDim.new(0, 5)
             })
         })
-        local Title = VexUI:Create("TextLabel", {
+        local Title = CresentUI:Create("TextLabel", {
             Size = UDim2.new(0, 0, 0, 13),
             Parent = TagF,
             AnchorPoint = Vector2.new(0, 0.5),
@@ -1768,13 +1768,13 @@ function UI:CreateWindow(Config)
                 TextColor3 = "Tag.Text|Text"
             }
         }, {
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingLeft = UDim.new(0, 0)
             })
         })
         local Icon
         if Tag.Icon then
-            Icon = VexUI:Create("ImageLabel", {
+            Icon = CresentUI:Create("ImageLabel", {
                 AnchorPoint = Vector2.new(.04, 0.5),
                 BackgroundTransparency = 1,
                 Position = UDim2.new(.04, 0, 0.5, 0),
@@ -1801,7 +1801,7 @@ function UI:CreateWindow(Config)
         end
         return Tag
     end
-    local SearchF1 = VexUI:Create("Frame", {
+    local SearchF1 = CresentUI:Create("Frame", {
         Parent = TopBarF3,
         AnchorPoint = Vector2.new(0, 0.5),
         Size = UDim2.new(0, 27, 0, 25),
@@ -1816,7 +1816,7 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "Search.Background|Background"
         },
     }, {
-        VexUI:Create("Frame", {
+        CresentUI:Create("Frame", {
             Size = UDim2.new(0, 16, 0, 25),
             AnchorPoint = Vector2.new(1, 0.5),
             ClipsDescendants = true,
@@ -1830,7 +1830,7 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Search.Background|Background"
             },
         }),
-        VexUI:Create("ImageLabel", {
+        CresentUI:Create("ImageLabel", {
             AnchorPoint = Vector2.new(0, 0.5),
             Image = IconsV2.GetIcon("search"),
             BackgroundTransparency = 1,
@@ -1845,10 +1845,10 @@ function UI:CreateWindow(Config)
                 ImageColor3 = "IconColor"
             }
         }),
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("UIStroke", {
+        CresentUI:Create("UIStroke", {
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 0.6,
@@ -1856,7 +1856,7 @@ function UI:CreateWindow(Config)
                 Color = "Outline"
             }
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Color = ColorSequence.new(
                     Color3.fromRGB(255, 255, 255), 
                     Color3.fromRGB(255, 255, 255)
@@ -1871,7 +1871,7 @@ function UI:CreateWindow(Config)
         }),
     })
 
-    local SearchF2 = VexUI:Create("Frame", {
+    local SearchF2 = CresentUI:Create("Frame", {
         Parent = TopBarF3,
         AnchorPoint = Vector2.new(0, 0.5),
         Size = UDim2.new(0, 75, 0, 25),
@@ -1886,7 +1886,7 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "Search.Background|Background"
         }
     }, {
-        VexUI:Create("Frame", {
+        CresentUI:Create("Frame", {
             Size = UDim2.new(0, 16, 0, 25),
             AnchorPoint = Vector2.new(0, 0.5),
             ClipsDescendants = true,
@@ -1900,10 +1900,10 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Search.Background|Background"
             }
         }),
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("UIStroke", {
+        CresentUI:Create("UIStroke", {
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 0.6,
@@ -1911,7 +1911,7 @@ function UI:CreateWindow(Config)
                 Color = "Outline"
             }
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Color = ColorSequence.new(
                     Color3.fromRGB(255, 255, 255), 
                     Color3.fromRGB(255, 255, 255)
@@ -1926,7 +1926,7 @@ function UI:CreateWindow(Config)
         }),
     })
 
-    local WinElements = VexUI:Create("Frame", {
+    local WinElements = CresentUI:Create("Frame", {
         Parent = TopBarF3,
         Size = UDim2.new(0, 51, 0, 35),
         AnchorPoint = Vector2.new(0.95, 0.5),
@@ -1939,13 +1939,13 @@ function UI:CreateWindow(Config)
         BorderSizePixel = 0,
         ZIndex = 100,
     },{
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UIListLayout", {
             FillDirection = Enum.FillDirection.Horizontal,
             HorizontalAlignment = "Right",
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 3),
         }),
-        VexUI:Create("ImageButton", {
+        CresentUI:Create("ImageButton", {
             Name = "Cross",
             AnchorPoint = Vector2.new(0, 0.5),
             Image = IconsV2.GetIcon("x"),
@@ -1961,7 +1961,7 @@ function UI:CreateWindow(Config)
                 ImageColor3 = "IconColor"
             }
         }),
-        VexUI:Create("ImageButton", {
+        CresentUI:Create("ImageButton", {
             AnchorPoint = Vector2.new(0, 0.5),
             Image = IconsV2.GetIcon("minus"),
             BackgroundTransparency = 1,
@@ -1976,14 +1976,14 @@ function UI:CreateWindow(Config)
                 ImageColor3 = "IconColor"
             }
         }),
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             --PaddingLeft = UDim.new(0, 5),
             --PaddingRight = UDim.new(0, 5),
             PaddingTop = UDim.new(0, 4),
         }),
     })
 
-    local SearchBox = VexUI:Create("TextBox", {
+    local SearchBox = CresentUI:Create("TextBox", {
         Parent = SearchF2,
         BackgroundColor3 = Color3.new(1, 1, 1),
         BackgroundTransparency = 1,
@@ -2004,13 +2004,13 @@ function UI:CreateWindow(Config)
             TextStrokeColor3 = "Search.Text|Text"
         }
     },{
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0, 5),
             --PaddingRight = UDim.new(0, 0),
         })
     })
 
-    local SearchFrame = VexUI:Create("Frame", {
+    local SearchFrame = CresentUI:Create("Frame", {
             Parent = TopBarF3,
             Size = UDim2.new(1, 0, 0, 0),
             AnchorPoint = Vector2.new(0, 0),
@@ -2025,10 +2025,10 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Search.Background|Background"
             }
     },{
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("UIStroke", {
+        CresentUI:Create("UIStroke", {
             Color = Color3.fromRGB(255, 255, 255),
             LineJoinMode = "Round",
             Thickness = 0,
@@ -2036,7 +2036,7 @@ function UI:CreateWindow(Config)
                 Color = "Outline"
             }
         },{
-            VexUI:Create("UIGradient", {
+            CresentUI:Create("UIGradient", {
                 Color = ColorSequence.new(
                     Color3.fromRGB(255, 255, 255), 
                     Color3.fromRGB(255, 255, 255)
@@ -2050,7 +2050,7 @@ function UI:CreateWindow(Config)
             })
         }),
     })
-    local SearchScroll = VexUI:Create("ScrollingFrame", {
+    local SearchScroll = CresentUI:Create("ScrollingFrame", {
         Parent = SearchFrame,
         Active = true,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -2063,11 +2063,11 @@ function UI:CreateWindow(Config)
         ZIndex = 250,
         ScrollBarThickness = 0
     },{
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UIListLayout", {
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 5)
         }),
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0, 5),
             PaddingTop = UDim.new(0, 10),
         })
@@ -2085,7 +2085,7 @@ function UI:CreateWindow(Config)
         SearchScroll.CanvasSize = UDim2.new(0, 0, 0, SearchScroll.UIListLayout.AbsoluteContentSize.Y)
     end)
     function CreateSearchRow(entry)
-        local Row = VexUI:Create("TextButton", {
+        local Row = CresentUI:Create("TextButton", {
             Parent = SearchScroll,
             Size = UDim2.new(1, -10, 0, 32),
             BackgroundTransparency = 0.2,
@@ -2097,11 +2097,11 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Seach.Background|ElementColor"
             }
         }, {
-            VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
-            VexUI:Create("UIPadding", { PaddingTop = UDim.new(0, 10) }),
+            CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
+            CresentUI:Create("UIPadding", { PaddingTop = UDim.new(0, 10) }),
         })
 
-        local Icon = VexUI:Create("ImageLabel", {
+        local Icon = CresentUI:Create("ImageLabel", {
             Parent = Row,
             Size = UDim2.new(0, 16, 0, 16),
             Position = UDim2.new(0, 10, 0, -2),
@@ -2169,7 +2169,7 @@ function UI:CreateWindow(Config)
         ClearSearchResults()
     end)
 
-    local TabFrame = VexUI:Create("Frame", {
+    local TabFrame = CresentUI:Create("Frame", {
         Size = UDim2.new(0, Window.SideBarWidth, 0, Window.Size.Y.Offset - Window.Topbar.Height - 13),
         ClipsDescendants = true,
         Active = true,
@@ -2184,7 +2184,7 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "SideBar"
         }
     },{
-        VexUI:Create("Frame", {
+        CresentUI:Create("Frame", {
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
             BorderColor3 = Color3.new(0, 0, 0),
@@ -2197,7 +2197,7 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "SideBar"
             }
         }),
-        VexUI:Create("Frame", {
+        CresentUI:Create("Frame", {
             AnchorPoint = Vector2.new(1, 1),
             Position = UDim2.new(1, 0, 1, 0),
             BackgroundTransparency = (Window.Transparent and 1 or 0),
@@ -2210,13 +2210,13 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "SideBar"
             }
         }),
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
     })
 
     --USER
-    local UserFrame = VexUI:Create("Frame", {
+    local UserFrame = CresentUI:Create("Frame", {
         Parent = TabFrame,
         AnchorPoint = Vector2.new(0.5, 0.96),
         Position = UDim2.new(0.5, 0, 0.96, 0),
@@ -2229,10 +2229,10 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "Background"
         }
     },{
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("ImageLabel", {
+        CresentUI:Create("ImageLabel", {
             AnchorPoint = Vector2.new(0.075, 0.5),
             BackgroundTransparency = 0.7,
             Position = UDim2.new(0.075, 0, 0.5, 0),
@@ -2242,11 +2242,11 @@ function UI:CreateWindow(Config)
                 return game:GetService("Players"):GetUserThumbnailAsync(Window.User.Anonymous and 1 or game.Players.LocalPlayer.UserId,Enum.ThumbnailType.HeadShot,Enum.ThumbnailSize.Size150x150)
             end)(),
         },{
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 64),
             }),
         }),
-        VexUI:Create("TextButton", {
+        CresentUI:Create("TextButton", {
             Visible = Window.User.Callback and true or false,
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
@@ -2259,7 +2259,7 @@ function UI:CreateWindow(Config)
     UserFrame.TextButton.MouseButton1Click:Connect(function()
         task.spawn(Window.User.Callback)
     end)
-    local UserTitle = VexUI:Create("TextLabel", {
+    local UserTitle = CresentUI:Create("TextLabel", {
         Parent = UserFrame,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -2277,12 +2277,12 @@ function UI:CreateWindow(Config)
             TextColor3 = "User.Text|Text"
         }
     }, {
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0,40),
             PaddingBottom = UDim.new(0,15)
         })
     })
-    local UserSub = VexUI:Create("TextLabel", {
+    local UserSub = CresentUI:Create("TextLabel", {
         Parent = UserFrame,
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
@@ -2300,7 +2300,7 @@ function UI:CreateWindow(Config)
             TextColor3 = "User.Text|Text"
         }
     }, {
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0,40),
             PaddingTop = UDim.new(0,15)
         })
@@ -2310,7 +2310,7 @@ function UI:CreateWindow(Config)
     --endUser
 
     --MUSIC
-    local MusicFrame = VexUI:Create("Frame", {
+    local MusicFrame = CresentUI:Create("Frame", {
         Parent = TabFrame,
         AnchorPoint = Vector2.new(0.5, 1),
         Position = UDim2.new(0.5, 0, 1, -55),
@@ -2323,10 +2323,10 @@ function UI:CreateWindow(Config)
             BackgroundColor3 = "Background"
         }
     },{
-        VexUI:Create("UICorner", {
+        CresentUI:Create("UICorner", {
             CornerRadius = UDim.new(0, 16),
         }),
-        VexUI:Create("TextLabel", {
+        CresentUI:Create("TextLabel", {
             AnchorPoint = Vector2.new(0, 0.5),
             Position = UDim2.new(0, 10, 0.5, 0),
             BackgroundTransparency = 1,
@@ -2346,7 +2346,7 @@ function UI:CreateWindow(Config)
             }
         }),
     })
-    local MusicPrev = VexUI:Create("ImageButton", {
+    local MusicPrev = CresentUI:Create("ImageButton", {
         Parent = MusicFrame,
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -58, 0.5, 0),
@@ -2358,7 +2358,7 @@ function UI:CreateWindow(Config)
             ImageColor3 = "User.Text|Text"
         }
     })
-    local MusicToggle = VexUI:Create("ImageButton", {
+    local MusicToggle = CresentUI:Create("ImageButton", {
         Parent = MusicFrame,
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -34, 0.5, 0),
@@ -2370,7 +2370,7 @@ function UI:CreateWindow(Config)
             ImageColor3 = "Text"
         }
     })
-    local MusicNext = VexUI:Create("ImageButton", {
+    local MusicNext = CresentUI:Create("ImageButton", {
         Parent = MusicFrame,
         AnchorPoint = Vector2.new(1, 0.5),
         Position = UDim2.new(1, -10, 0.5, 0),
@@ -2385,7 +2385,7 @@ function UI:CreateWindow(Config)
     MusicFrame.Visible = Window.Music_Player
     --endMusic
 
-    local LeftScroll = VexUI:Create("ScrollingFrame", {
+    local LeftScroll = CresentUI:Create("ScrollingFrame", {
         Parent = TabFrame,
         Active = true,
         BackgroundColor3 = Color3.fromRGB(255, 255, 255),
@@ -2396,11 +2396,11 @@ function UI:CreateWindow(Config)
         Size = UDim2.new(1, 0, 1, -50 - (Window.Music_Player and 45 or 0)),
         ScrollBarThickness = 0
     },{
-        VexUI:Create("UIListLayout", {
+        CresentUI:Create("UIListLayout", {
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 5)
         }),
-        VexUI:Create("UIPadding", {
+        CresentUI:Create("UIPadding", {
             PaddingLeft = UDim.new(0, 5),
             PaddingRight = UDim.new(0, 5),
             --PaddingTop = UDim.new(0, 10),
@@ -2410,7 +2410,7 @@ function UI:CreateWindow(Config)
         LeftScroll.CanvasSize = UDim2.new(0, LeftScroll.UIListLayout.AbsoluteContentSize.X, 0, LeftScroll.UIListLayout.AbsoluteContentSize.Y)
     end)
 
-    local ElementFolder = VexUI:Create("Folder", {
+    local ElementFolder = CresentUI:Create("Folder", {
         Parent = Main,
     })
 
@@ -2429,7 +2429,7 @@ function UI:CreateWindow(Config)
             Callback = Config.Callback or function() end
         }
 
-        local TabBack = VexUI:Create("Frame", {
+        local TabBack = CresentUI:Create("Frame", {
             Parent = type or LeftScroll,
             AnchorPoint = Vector2.new(0, 0),
             Position = UDim2.new(0, 0, 0, 0),
@@ -2444,7 +2444,7 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "Tab.Background|ElementColor"
             }
         },{
-            VexUI:Create("TextButton", {
+            CresentUI:Create("TextButton", {
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
                 BorderColor3 = Color3.new(0, 0, 0),
@@ -2454,10 +2454,10 @@ function UI:CreateWindow(Config)
                 BorderSizePixel = 0,
                 ZIndex = 6,
             }),
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 8),
             }),
-            VexUI:Create("UIStroke", {
+            CresentUI:Create("UIStroke", {
                 Color = Color3.fromRGB(255, 255, 255),
                 LineJoinMode = "Round",
                 Thickness = 0.6,
@@ -2465,7 +2465,7 @@ function UI:CreateWindow(Config)
                     Color = "Outline"
                 }
             },{
-                VexUI:Create("UIGradient", {
+                CresentUI:Create("UIGradient", {
                     Color = ColorSequence.new(
                         Color3.fromRGB(255, 255, 255), 
                         Color3.fromRGB(255, 255, 255)
@@ -2478,12 +2478,12 @@ function UI:CreateWindow(Config)
                     Rotation = -110
                 })
             }),
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingBottom = UDim.new(0, 5),
                 PaddingTop = UDim.new(0, 5),
             })
         })
-        local TabTitle = VexUI:Create("TextLabel", {
+        local TabTitle = CresentUI:Create("TextLabel", {
             Parent = TabBack,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
@@ -2503,13 +2503,13 @@ function UI:CreateWindow(Config)
                 TextColor3 = "Tab.Text|Text"
             }
         }, {
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingLeft = UDim.new(0,10)
             })
         })
         local TabIcon
         if Tab.Icon then
-            TabIcon = VexUI:Create("ImageLabel", {
+            TabIcon = CresentUI:Create("ImageLabel", {
                 AnchorPoint = Vector2.new(0, 0.5),
                 Image = GetIcon(Tab.Icon),
                 BackgroundTransparency = 1,
@@ -2532,7 +2532,7 @@ function UI:CreateWindow(Config)
             TabIcon.ImageTransparency = 0.5
         end
         
-        local ElementFrame = VexUI:Create("Frame", {
+        local ElementFrame = CresentUI:Create("Frame", {
             Parent = ElementFolder,
             AnchorPoint = Vector2.new(.97, 0),
             Position = UDim2.new(.97, 0, 0, Window.Topbar.Height+13),
@@ -2546,11 +2546,11 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = "SideBar"
             }
         },{
-            VexUI:Create("UICorner", {
+            CresentUI:Create("UICorner", {
                 CornerRadius = UDim.new(0, 16),
             }),
         })
-        local RightScroll = VexUI:Create("ScrollingFrame", {
+        local RightScroll = CresentUI:Create("ScrollingFrame", {
             Parent = ElementFrame,
             BackgroundTransparency = 1,
             BorderColor3 = Color3.fromRGB(0, 0, 0),
@@ -2561,11 +2561,11 @@ function UI:CreateWindow(Config)
             ZIndex = 10,
             --AutomaticSize = Y
         },{
-            VexUI:Create("UIListLayout", {
+            CresentUI:Create("UIListLayout", {
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 4)
             }),
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 --PaddingTop = UDim.new(0,5),
                 PaddingBottom = UDim.new(0,5),
                 PaddingLeft = UDim.new(0,5)
@@ -2650,7 +2650,7 @@ function UI:CreateWindow(Config)
             elseif typeof(Paragraph.Color) == "string" then
                 ResolvedColor = Colors[Paragraph.Color]
                 if not ResolvedColor then
-                    warn("VexUI: Unknown color name '" .. Paragraph.Color .. "'")
+                    warn("CresentUI: Unknown color name '" .. Paragraph.Color .. "'")
                 end
             end
             local ParagraphThemeID = nil
@@ -2661,7 +2661,7 @@ function UI:CreateWindow(Config)
             if not ResolvedColor then
                 StrokeThemeID = {Color = "Outline"}
             end
-            local ParagraphFrame = VexUI:Create("Frame", {
+            local ParagraphFrame = CresentUI:Create("Frame", {
                 Parent = RightScroll,
                 AnchorPoint = Vector2.new(0, 0),
                 Position = UDim2.new(0, 0, 0, 0),
@@ -2676,13 +2676,13 @@ function UI:CreateWindow(Config)
                 BackgroundColor3 = ResolvedColor,
                 ThemeID = ParagraphThemeID
             },{
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UIStroke", {
                     Color = ResolvedColor,
                     LineJoinMode = "Round",
                     Thickness = 0.6,
                     ThemeID = StrokeThemeID
                 },{
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(
                             Color3.fromRGB(255, 255, 255), 
                             Color3.fromRGB(255, 255, 255)
@@ -2695,19 +2695,19 @@ function UI:CreateWindow(Config)
                         Rotation = -110
                     })
                 }),
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 12),
                 }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingTop = UDim.new(0,5),
                     PaddingLeft = UDim.new(0,5),
                     PaddingBottom = UDim.new(0,5)
                 }),
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 1)
                 }),
-                VexUI:Create("Frame", {
+                CresentUI:Create("Frame", {
                     BackgroundTransparency = 1,
                     AutomaticSize = Enum.AutomaticSize.Y,
                     Size = UDim2.new(1, 0, 0, 0),
@@ -2715,18 +2715,18 @@ function UI:CreateWindow(Config)
                     ClipsDescendants = true,
                     ZIndex = 16,
                 },{
-                    VexUI:Create("Frame", {
+                    CresentUI:Create("Frame", {
                         BackgroundTransparency = 1,
                         AutomaticSize = Enum.AutomaticSize.Y,
                         Size = UDim2.new(1, 0, 0, 0),
                         ClipsDescendants = true,
                         ZIndex = 16,
                     },{
-                        VexUI:Create("UIListLayout", {
+                        CresentUI:Create("UIListLayout", {
                             SortOrder = Enum.SortOrder.LayoutOrder,
                             Padding = UDim.new(0, 1)
                         }),
-                        VexUI:Create("UIPadding", {
+                        CresentUI:Create("UIPadding", {
                             PaddingTop = UDim.new(0,9),
                         })
                     })
@@ -2735,7 +2735,7 @@ function UI:CreateWindow(Config)
 
             local Thumbnail
             if Paragraph.Thumbnail then
-                Thumbnail = VexUI:Create("ImageLabel", {
+                Thumbnail = CresentUI:Create("ImageLabel", {
                     AnchorPoint = Vector2.new(0.1, 0.5),
                     Image = Paragraph.Thumbnail,
                     BackgroundTransparency = 1,
@@ -2751,7 +2751,7 @@ function UI:CreateWindow(Config)
                         ImageColor3 = "Paragraph.IconColor|IconColor"
                     },
                 },{
-                    VexUI:Create("UICorner", {
+                    CresentUI:Create("UICorner", {
                         CornerRadius = UDim.new(0, 16),
                     }),
                 })
@@ -2771,7 +2771,7 @@ function UI:CreateWindow(Config)
                     TextColor3 = "Paragraph.Text|Text"
                 }
             }, {
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 5)
                 })
             })
@@ -2792,13 +2792,13 @@ function UI:CreateWindow(Config)
                     TextColor3 = "Paragraph.Text|Text"
                 }
             }, {
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 5)
                 })
             })
             local Icon
             if Paragraph.Icon then
-                Icon = VexUI:Create("ImageLabel", {
+                Icon = CresentUI:Create("ImageLabel", {
                     AnchorPoint = Vector2.new(0, 0.5),
                     Image = GetIcon(Paragraph.Icon),
                     BackgroundTransparency = 1,
@@ -2850,7 +2850,7 @@ function UI:CreateWindow(Config)
             }
 
             local Beeee, ButtonFrame, Inner = Utility:Element(RightScroll, ElementFrame, Button.SizeY, "Button")
-            local ButtonTRG = VexUI:Create("TextButton", {
+            local ButtonTRG = CresentUI:Create("TextButton", {
                 Parent = Beeee,
                 Size = UDim2.new(1,0,1,0),
                 TextTransparency = 1,
@@ -2861,7 +2861,7 @@ function UI:CreateWindow(Config)
 
             local Icon
             if Button.Icon then
-                Icon = VexUI:Create("ImageLabel", {
+                Icon = CresentUI:Create("ImageLabel", {
                     AnchorPoint = Vector2.new(.96, 0.5),
                     Image = GetIcon(Button.Icon),
                     BackgroundTransparency = 1,
@@ -2927,7 +2927,7 @@ function UI:CreateWindow(Config)
                 Callback = Config.Callback or function() end
             }
             local Beeee, ToggleFrame, Inner = Utility:Element(RightScroll, ElementFrame, Togglee.SizeY, "Toggle")
-            local ToggleTRG = VexUI:Create("TextButton", {
+            local ToggleTRG = CresentUI:Create("TextButton", {
                 Parent = Beeee,
                 Size = UDim2.new(1, 0, 1, 0),
                 TextTransparency = 1,
@@ -2936,7 +2936,7 @@ function UI:CreateWindow(Config)
             })
             local Title, Desc = Utility:ElText(Inner, Togglee.Title, Togglee.Desc, "Button")
 
-            local ToggleV = VexUI:Create("Frame", {
+            local ToggleV = CresentUI:Create("Frame", {
                 Parent = ToggleFrame,
                 AnchorPoint = Vector2.new(.96, 0.5),
                 Position = UDim2.new(.96, 0, 0.5, 0),
@@ -2948,7 +2948,7 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Toggle.Placeholder|Placeholder"
                 }
             },{
-                VexUI:Create("Frame", {
+                CresentUI:Create("Frame", {
                     AnchorPoint = Vector2.new(.96, 0.5),
                     Position = UDim2.new(0, 18, 0.5, 0),
                     ClipsDescendants = true,
@@ -2959,11 +2959,11 @@ function UI:CreateWindow(Config)
                         BackgroundColor3 = "Toggle.ToggleVal|Text"
                     }
                 },{
-                    VexUI:Create("UICorner", {
+                    CresentUI:Create("UICorner", {
                         CornerRadius = UDim.new(0, 32),
                     }),
                 }),
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 12),
                 }),
             })
@@ -3050,23 +3050,23 @@ function UI:CreateWindow(Config)
             local Beeee, SliderElement, Inner = Utility:Element(RightScroll, ElementFrame, Slider.SizeY, "Slider")
             local Title, Desc = Utility:ElText(Inner, Slider.Title, Slider.Desc, "Button")
 
-            local TextContainer = VexUI:Create("Frame", {
+            local TextContainer = CresentUI:Create("Frame", {
                 Parent = SliderElement,
                 BackgroundTransparency = 1,
                 Size = UDim2.new(1, 0, 1, 0),
                 ClipsDescendants = true,
                 ZIndex = 16,
             }, {
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 1),
                 }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingTop = UDim.new(0, 9),
                 }),
             })
 
-            local ValueFrame = VexUI:Create("Frame", {
+            local ValueFrame = CresentUI:Create("Frame", {
                 Parent = SliderElement,
                 AnchorPoint = Vector2.new(0.96, 0.5),
                 Position = UDim2.new(0.96, -40, 0.5, 0),
@@ -3079,17 +3079,17 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Slider.Placeholder|Placeholder"
                 }
             }, {
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 12),
                 }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UIStroke", {
                     LineJoinMode = "Round",
                     Thickness = 0.6,
                     ThemeID = {
                         Color = "Outline"
                     }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(
                             Color3.fromRGB(255, 255, 255),
                             Color3.fromRGB(255, 255, 255)
@@ -3104,7 +3104,7 @@ function UI:CreateWindow(Config)
                 }),
             })
 
-            local DropValue = VexUI:Create("Frame", {
+            local DropValue = CresentUI:Create("Frame", {
                 Parent = ValueFrame,
                 BorderSizePixel = 0,
                 ClipsDescendants = true,
@@ -3115,12 +3115,12 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Slider.SliderPart|Text"
                 }
             }, {
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 12),
                 }),
             })
 
-            local BGFrame = VexUI:Create("Frame", {
+            local BGFrame = CresentUI:Create("Frame", {
                 Parent = SliderElement,
                 AnchorPoint = Vector2.new(0.96, 0.5),
                 Position = UDim2.new(0.96, 0, 0.5, 0),
@@ -3134,17 +3134,17 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Slider.Placeholder|Placeholder"
                 }
             }, {
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 10),
                 }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UIStroke", {
                     LineJoinMode = "Round",
                     Thickness = 0.6,
                     ThemeID = {
                         Color = "Outline"
                     }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(
                             Color3.fromRGB(255, 255, 255),
                             Color3.fromRGB(255, 255, 255)
@@ -3159,7 +3159,7 @@ function UI:CreateWindow(Config)
                 }),
             })
 
-            local SliderTRG = VexUI:Create("TextButton", {
+            local SliderTRG = CresentUI:Create("TextButton", {
                 Parent = ValueFrame,
                 Size = UDim2.new(1, 0, 1, 0),
                 BackgroundTransparency = 1,
@@ -3167,7 +3167,7 @@ function UI:CreateWindow(Config)
                 ZIndex = 25,
             })
 
-            local BGBox = VexUI:Create("TextBox", {
+            local BGBox = CresentUI:Create("TextBox", {
                 Parent = BGFrame,
                 AnchorPoint = Vector2.new(0.5, 0.5),
                 Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -3184,7 +3184,7 @@ function UI:CreateWindow(Config)
                 }
             })
 
-            local ScrollFrame = VexUI:Create("Frame", {
+            local ScrollFrame = CresentUI:Create("Frame", {
                 Parent = DropValue,
                 AnchorPoint = Vector2.new(0, 1),
                 Position = UDim2.new(0, 0, -1.5, -5),
@@ -3197,10 +3197,10 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Slider.Placeholder|Placeholder"
                 }
             }, {
-                VexUI:Create("UICorner", {
+                CresentUI:Create("UICorner", {
                     CornerRadius = UDim.new(0, 6),
                 }),
-                VexUI:Create("TextLabel", {
+                CresentUI:Create("TextLabel", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(1, 0, 1, 0),
                     TextColor3 = Color3.fromRGB(255, 255, 255),
@@ -3354,21 +3354,21 @@ function UI:CreateWindow(Config)
                 ASpeed = 0.2
             }
 
-            local DropDownElement = VexUI:Create("Frame", {
+            local DropDownElement = CresentUI:Create("Frame", {
                 Parent = RightScroll,
                 BackgroundTransparency = 1,
                 BorderSizePixel = 0,
                 AutomaticSize = "Y",
                 Size = UDim2.new(0, ElementFrame.Size.X.Offset - 10, 0, 40),
             }, {
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 10) }),
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 10) }),
+                CresentUI:Create("UIListLayout", {
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 0)
                 })
             })
 
-            local DropFrame = VexUI:Create("Frame", {
+            local DropFrame = CresentUI:Create("Frame", {
                 Parent = DropDownElement,
                 BackgroundColor3 = Color3.fromRGB(43, 43, 43),
                 BackgroundTransparency = 0.5,
@@ -3379,14 +3379,14 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Dropdown.Background|ElementColor"
                 }
             }, {
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+                CresentUI:Create("UIStroke", {
                     Color = Color3.fromRGB(255, 255, 255),
                     LineJoinMode = "Round",
                     Thickness = 0.6,
                     ThemeID = { Color = "Outline" }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(Color3.fromRGB(255,255,255), Color3.fromRGB(255,255,255)),
                         Transparency = NumberSequence.new({
                             NumberSequenceKeypoint.new(0, 0.1),
@@ -3396,21 +3396,21 @@ function UI:CreateWindow(Config)
                         Rotation = -110
                     })
                 }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingTop = UDim.new(0,0),--5
                     PaddingBottom = UDim.new(0,0)--5
                 }),
-                VexUI:Create("Frame", {
+                CresentUI:Create("Frame", {
                     BackgroundTransparency = 1,
                     Size = UDim2.new(1, 0, 1, 0),
                     ClipsDescendants = true,
                     ZIndex = 16,
                 },{
-                    VexUI:Create("UIListLayout", {
+                    CresentUI:Create("UIListLayout", {
                         SortOrder = Enum.SortOrder.LayoutOrder,
                         Padding = UDim.new(0, 1)
                     }),
-                    VexUI:Create("UIPadding", {
+                    CresentUI:Create("UIPadding", {
                         PaddingTop = UDim.new(0,9),
                     })
                 })
@@ -3430,7 +3430,7 @@ function UI:CreateWindow(Config)
                     TextColor3 = "Dropdown.Text|Text"
                 }
             }, {
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 10),
                     PaddingTop = UDim.new(0,5)
                 }),
@@ -3452,12 +3452,12 @@ function UI:CreateWindow(Config)
                     TextColor3 = "Dropdown.Text|Text"
                 }
             }, {
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingTop = UDim.new(0,5)
                 }),
             })
 
-            local DropValueFrame = VexUI:Create("Frame", {
+            local DropValueFrame = CresentUI:Create("Frame", {
                 Parent = DropFrame,
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, -10, 0.5, 0),
@@ -3469,13 +3469,13 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Dropdown.Placeholder|Placeholder"
                 }
             }, {
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+                CresentUI:Create("UIStroke", {
                     Color = Color3.fromRGB(255, 255, 255),
                     Thickness = 0.6,
                     ThemeID = { Color = "Outline" }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(Color3.fromRGB(255,255,255), Color3.fromRGB(255,255,255)),
                         Transparency = NumberSequence.new({
                             NumberSequenceKeypoint.new(0, 0.1),
@@ -3487,7 +3487,7 @@ function UI:CreateWindow(Config)
                 })
             })
 
-            local DropIcon = VexUI:Create("ImageLabel", {
+            local DropIcon = CresentUI:Create("ImageLabel", {
                 Parent = DropValueFrame,
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, -4, 0.5, 0),
@@ -3500,7 +3500,7 @@ function UI:CreateWindow(Config)
                 }
             })
 
-            local DropOptionBox = VexUI:Create("TextBox", {
+            local DropOptionBox = CresentUI:Create("TextBox", {
                 Parent = DropValueFrame,
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 8, 0, 0),
@@ -3517,7 +3517,7 @@ function UI:CreateWindow(Config)
                 }
             })
 
-            local DropDownTRG = VexUI:Create("TextButton", {
+            local DropDownTRG = CresentUI:Create("TextButton", {
                 Parent = DropFrame,
                 BackgroundTransparency = 1,
                 Size = UDim2.new(1, 0, 1, 0),
@@ -3525,7 +3525,7 @@ function UI:CreateWindow(Config)
                 ZIndex = 25,
             })
 
-            local DropElementFrame = VexUI:Create("Frame", {
+            local DropElementFrame = CresentUI:Create("Frame", {
                 Parent = DropDownElement,
                 BackgroundTransparency = 1,
                 ClipsDescendants = true,
@@ -3533,7 +3533,7 @@ function UI:CreateWindow(Config)
                 ZIndex = 15,
             })
 
-            local ScrollingFrame = VexUI:Create("ScrollingFrame", {
+            local ScrollingFrame = CresentUI:Create("ScrollingFrame", {
                 Parent = DropElementFrame,
                 BackgroundTransparency = 1,
                 Size = UDim2.new(1, 0, 1, 0),
@@ -3543,7 +3543,7 @@ function UI:CreateWindow(Config)
                 ScrollBarThickness = 2,
                 ZIndex = 15,
             }, {
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingTop = UDim.new(0, 0),
                     PaddingBottom = UDim.new(0, 0),
                     PaddingLeft = UDim.new(0, 2),
@@ -3551,7 +3551,7 @@ function UI:CreateWindow(Config)
                 })
             })
 
-            local ListLayout = VexUI:Create("UIListLayout", {
+            local ListLayout = CresentUI:Create("UIListLayout", {
                 Parent = ScrollingFrame,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 5),
@@ -3649,7 +3649,7 @@ function UI:CreateWindow(Config)
                 local Items = {}
 
                 for _, Item in ipairs(Dropdown.Option) do
-                    local DropElement = VexUI:Create("Frame", {
+                    local DropElement = CresentUI:Create("Frame", {
                         Parent = ScrollingFrame,
                         Name = Item,
                         BackgroundColor3 = Color3.fromRGB(43, 43, 43),
@@ -3661,13 +3661,13 @@ function UI:CreateWindow(Config)
                             BackgroundColor3 = "Dropdown.Background|ElementColor"
                         }
                     }, {
-                        VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
-                        VexUI:Create("UIStroke", {
+                        CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+                        CresentUI:Create("UIStroke", {
                             Color = Color3.fromRGB(255, 255, 255),
                             Thickness = 0.6,
                             ThemeID = { Color = "Outline" }
                         }, {
-                            VexUI:Create("UIGradient", {
+                            CresentUI:Create("UIGradient", {
                                 Color = ColorSequence.new(Color3.fromRGB(255,255,255), Color3.fromRGB(255,255,255)),
                                 Transparency = NumberSequence.new({
                                     NumberSequenceKeypoint.new(0, 0.1),
@@ -3679,7 +3679,7 @@ function UI:CreateWindow(Config)
                         })
                     })
 
-                    local DropElementTRG = VexUI:Create("TextButton", {
+                    local DropElementTRG = CresentUI:Create("TextButton", {
                         Parent = DropElement,
                         BackgroundTransparency = 1,
                         Size = UDim2.new(1, 0, 1, 0),
@@ -3693,7 +3693,7 @@ function UI:CreateWindow(Config)
                             TextColor3 = "Dropdown.Text|Text"
                         }
                     }, {
-                        VexUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 8) })
+                        CresentUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 8) })
                     })
 
                     local itemEntry = { DropElement = DropElement, Selected = false }
@@ -3791,7 +3791,7 @@ function UI:CreateWindow(Config)
             local Beeee, InputElement, Inner = Utility:Element(RightScroll, ElementFrame, Input.SizeY, "Input")
             local Title, Desc = Utility:ElText(Inner, Input.Title, Input.Desc, "Button")
             
-            local InputFrame = VexUI:Create("Frame", {
+            local InputFrame = CresentUI:Create("Frame", {
                 Parent = InputElement,
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, -10, 0.5, 0),
@@ -3802,13 +3802,13 @@ function UI:CreateWindow(Config)
                 ZIndex = 15,
                 ThemeID = { BackgroundColor3 = "Input.Placeholder|Placeholder" }
             }, {
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+                CresentUI:Create("UIStroke", {
                     Color = Color3.fromRGB(255, 255, 255),
                     Thickness = 0.6,
                     ThemeID = { Color = "Outline" }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(Color3.fromRGB(255,255,255), Color3.fromRGB(255,255,255)),
                         Transparency = NumberSequence.new({
                             NumberSequenceKeypoint.new(0, 0.1),
@@ -3820,7 +3820,7 @@ function UI:CreateWindow(Config)
                 })
             })
 
-            local InputBox = VexUI:Create("TextBox", {
+            local InputBox = CresentUI:Create("TextBox", {
                 Parent = InputFrame,
                 BackgroundTransparency = 1,
                 ClearTextOnFocus = false,
@@ -3835,7 +3835,7 @@ function UI:CreateWindow(Config)
                 TextXAlignment = Enum.TextXAlignment.Left,
                 ThemeID = { TextColor3 = "Text" }
             }, {
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 8),
                     PaddingRight = UDim.new(0, 4)
                 })
@@ -3843,7 +3843,7 @@ function UI:CreateWindow(Config)
 
             local MaxLabel
             if Input.MaxSymbols then
-                MaxLabel = VexUI:Create("TextLabel", {
+                MaxLabel = CresentUI:Create("TextLabel", {
                     Parent = InputFrame,
                     AnchorPoint = Vector2.new(1, 0.5),
                     Position = UDim2.new(1, -6, 0.5, 0),
@@ -3942,7 +3942,7 @@ function UI:CreateWindow(Config)
             local Beeee, KeybindElement, Inner = Utility:Element(RightScroll, ElementFrame, Keybind.SizeY, "Keybind")
             local Title, Desc = Utility:ElText(Inner, Keybind.Title, Keybind.Desc, "Keybind")
 
-            local KeyFrame = VexUI:Create("TextButton", {
+            local KeyFrame = CresentUI:Create("TextButton", {
                 Parent = KeybindElement,
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, -10, 0.5, 0),
@@ -3961,14 +3961,14 @@ function UI:CreateWindow(Config)
                     TextColor3 = "Keybind.Text|Text"
                 }
             }, {
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 6) }),
+                CresentUI:Create("UIStroke", {
                     Color = Color3.fromRGB(255, 255, 255),
                     Thickness = 0.6,
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                     ThemeID = { Color = "Outline" }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(Color3.fromRGB(255,255,255), Color3.fromRGB(255,255,255)),
                         Transparency = NumberSequence.new({
                             NumberSequenceKeypoint.new(0, 0.1),
@@ -4038,7 +4038,7 @@ function UI:CreateWindow(Config)
             return Keybind
         end
         function Tab:Devider()
-            local Devider = VexUI:Create("Frame", {
+            local Devider = CresentUI:Create("Frame", {
                 Parent = RightScroll,
                 ZIndex = 20,
                 Size = UDim2.new(1, -7, 0, 1),
@@ -4046,11 +4046,11 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "Outline"
                 },
             },{
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 100) }),
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 100) }),
             })
         end
         function Tab:Space(Value)
-            local Space = VexUI:Create("Frame", {
+            local Space = CresentUI:Create("Frame", {
                 Parent = RightScroll,
                 ZIndex = 20,
                 BackgroundTransparency = 1,
@@ -4067,7 +4067,7 @@ function UI:CreateWindow(Config)
                 Border = Config.Border or false,
                 UIPadding = Config.UIPadding or UDim.new(0, 0),
             }
-            local SectionElement = VexUI:Create("Frame", {
+            local SectionElement = CresentUI:Create("Frame", {
                 Parent = RightScroll,
                 BackgroundColor3 = Color3.new(1, 1, 1),
                 BackgroundTransparency = 1,
@@ -4078,7 +4078,7 @@ function UI:CreateWindow(Config)
                 Size = UDim2.new(0, ElementFrame.Size.X.Offset - 10, 0, 30),
             })
 
-            local SectionLabel = VexUI:Create("TextLabel", {
+            local SectionLabel = CresentUI:Create("TextLabel", {
                 Parent = SectionElement,
                 BackgroundTransparency = 1,
                 RichText = true,
@@ -4093,7 +4093,7 @@ function UI:CreateWindow(Config)
                     TextColor3 = "Section.Text|Text"
                 },
             },{
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UIPadding", {
                     PaddingLeft = UDim.new(0, 0),
                 })
             })
@@ -4101,7 +4101,7 @@ function UI:CreateWindow(Config)
             local Icon
             if Section.Icon then
                 SectionLabel.UIPadding.PaddingLeft = Section.UIPadding + UDim.new(0, 22)
-                Icon = VexUI:Create("ImageLabel", {
+                Icon = CresentUI:Create("ImageLabel", {
                     AnchorPoint = Vector2.new(0, 0.5),
                     BackgroundTransparency = 1,
                     Position = UDim2.new(0, 0, 0.5, 0),
@@ -4119,7 +4119,7 @@ function UI:CreateWindow(Config)
                 end
             end
 
-            local SectionContainer = VexUI:Create("Frame", {
+            local SectionContainer = CresentUI:Create("Frame", {
                 Parent = SectionElement,
                 Name = "Container",
                 BackgroundTransparency = (Section.Border and 0.7 or 1),
@@ -4132,24 +4132,24 @@ function UI:CreateWindow(Config)
                     BackgroundColor3 = "ElementColor"
                 }
             }, {
-                VexUI:Create("UIPadding",{
+                CresentUI:Create("UIPadding",{
                     PaddingLeft = UDim.new(0,2),
                     PaddingTop = UDim.new(0,4),
                     PaddingBottom = UDim.new(0,4)
                 }),
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     FillDirection = Enum.FillDirection.Vertical,
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 5),
                 }),
-                VexUI:Create("UIStroke", {
+                CresentUI:Create("UIStroke", {
                     Color = Color3.fromRGB(255, 255, 255),
                     LineJoinMode = "Round",
                     Transparency = (Section.Border and 0 or 1),
                     Thickness = 0.6,
                     ThemeID = { Color = "Outline" }
                 }, {
-                    VexUI:Create("UIGradient", {
+                    CresentUI:Create("UIGradient", {
                         Color = ColorSequence.new(
                             Color3.fromRGB(255, 255, 255),
                             Color3.fromRGB(255, 255, 255)
@@ -4162,8 +4162,8 @@ function UI:CreateWindow(Config)
                         --Rotation = -110
                     })
                 }),
-                VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
-                VexUI:Create("UIPadding", {
+                CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
+                CresentUI:Create("UIPadding", {
                     PaddingTop = UDim.new(0, 5),
                 })
             })
@@ -4172,7 +4172,7 @@ function UI:CreateWindow(Config)
             local Height = 0
             local Elements = 0
 
-            local Arrow = VexUI:Create("ImageLabel", {
+            local Arrow = CresentUI:Create("ImageLabel", {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Image = IconsV2.GetIcon("chevron-down"),
                 BackgroundTransparency = 1,
@@ -4187,7 +4187,7 @@ function UI:CreateWindow(Config)
                 }
             })
 
-            local SectionTRG = VexUI:Create("TextButton", {
+            local SectionTRG = CresentUI:Create("TextButton", {
                 Parent = SectionElement,
                 BackgroundTransparency = 1,
                 Text = "",
@@ -4280,14 +4280,14 @@ function UI:CreateWindow(Config)
             Config = Config or {}
             local Padding = Config.Padding or 5
 
-            local GroupFrame = VexUI:Create("Frame", {
+            local GroupFrame = CresentUI:Create("Frame", {
                 Parent = RightScroll,
                 BackgroundTransparency = 1,
                 AutomaticSize = "Y",
                 Size = UDim2.new(0, ElementFrame.Size.X.Offset - 10, 0, 0),
                 ZIndex = 15,
             }, {
-                VexUI:Create("UIListLayout", {
+                CresentUI:Create("UIListLayout", {
                     FillDirection = Enum.FillDirection.Horizontal,
                     HorizontalAlignment = Enum.HorizontalAlignment.Left,
                     VerticalAlignment = Enum.VerticalAlignment.Top,
@@ -4343,7 +4343,7 @@ function UI:CreateWindow(Config)
 
         local isOpen = Section.Opened
 
-        local SectionFrame = VexUI:Create("Frame", {
+        local SectionFrame = CresentUI:Create("Frame", {
             Parent = LeftScroll,
             AutomaticSize = "Y",
             BackgroundTransparency = 1,
@@ -4351,23 +4351,23 @@ function UI:CreateWindow(Config)
             BorderSizePixel = 0,
             ZIndex = 5,
         }, {
-            VexUI:Create("UIListLayout", {
+            CresentUI:Create("UIListLayout", {
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 5),
             }),
         })
 
-        local SectionBTN = VexUI:Create("TextButton", {
+        local SectionBTN = CresentUI:Create("TextButton", {
             Parent = SectionFrame,
             Size = UDim2.new(1, 0, 0, 25),
             BackgroundTransparency = 1,
             TextTransparency = 1,
             ZIndex = 50,
         },{
-            VexUI:Create("UIPadding", {
+            CresentUI:Create("UIPadding", {
                 PaddingTop = UDim.new(0, 9),
             }),
-            VexUI:Create("ImageLabel", {
+            CresentUI:Create("ImageLabel", {
                 AnchorPoint = Vector2.new(1, 0.5),
                 Position = UDim2.new(1, -10, 0.5, 0),
                 BackgroundTransparency = 1,
@@ -4398,13 +4398,13 @@ function UI:CreateWindow(Config)
             ZIndex = 49,
             ThemeID = { TextColor3 = "Text" }
         }, {
-            VexUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 12) })
+            CresentUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 12) })
         })
         SecTitle.Position = UDim2.new(0, 0, 0, 0)
 
         local Icon
         if Section.Icon then
-            Icon = VexUI:Create("ImageLabel", {
+            Icon = CresentUI:Create("ImageLabel", {
                 AnchorPoint = Vector2.new(.02, 0.5),
                 --Image = IconsV2.GetIcon(Window.Icon),
                 BackgroundTransparency = 1,
@@ -4426,7 +4426,7 @@ function UI:CreateWindow(Config)
             end
         end
 
-        local SectionRoll = VexUI:Create("Frame", {
+        local SectionRoll = CresentUI:Create("Frame", {
             Parent = SectionFrame,
             AutomaticSize = "Y",
             ClipsDescendants = true,
@@ -4435,7 +4435,7 @@ function UI:CreateWindow(Config)
             BorderSizePixel = 0,
             ZIndex = 5,
         }, {
-            VexUI:Create("UIListLayout", {
+            CresentUI:Create("UIListLayout", {
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 5),
             }),
@@ -4671,7 +4671,7 @@ function UI:CreateWindow(Config)
         return Main.Size.X.Offset, Main.Size.Y.Offset
     end
     
-    local ResizeHandle = VexUI:Create("Frame", {
+    local ResizeHandle = CresentUI:Create("Frame", {
         Parent = UIScreen,
         Size = UDim2.new(0, 32, 0, 32),
         Position = UDim2.new(1, -10, 1, -10),
@@ -4680,7 +4680,7 @@ function UI:CreateWindow(Config)
         ZIndex = 499,
         Active = true,
     }, {
-        VexUI:Create("ImageLabel", {
+        CresentUI:Create("ImageLabel", {
             Size = UDim2.new(0, 25, 0, 25),
             BackgroundTransparency = 1,
             Image = "rbxassetid://97284127540888",
@@ -4945,7 +4945,7 @@ function UI:Notification(Config)
             Interactive = Config.Interactive
         }
 
-        local NotifFrame = VexUI:Create("Frame", {
+        local NotifFrame = CresentUI:Create("Frame", {
             Parent = Island,
             BackgroundColor3 = Color3.fromRGB(20, 20, 20),
             BackgroundTransparency = 0.2,
@@ -4956,16 +4956,16 @@ function UI:Notification(Config)
             ZIndex = 150,
             ThemeID = { BackgroundColor3 = "SideBar"}
         }, {
-            VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
-            VexUI:Create("UIPadding", { PaddingTop = UDim.new(0, 9) }),
-            VexUI:Create("UIStroke", {
+            CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+            CresentUI:Create("UIPadding", { PaddingTop = UDim.new(0, 9) }),
+            CresentUI:Create("UIStroke", {
                 LineJoinMode = "Round",
                 Thickness = 0.6,
                 ThemeID = {
                     Color = "Outline"
                 }
             }, {
-                VexUI:Create("UIGradient", {
+                CresentUI:Create("UIGradient", {
                     Color = ColorSequence.new(
                         Color3.fromRGB(255, 255, 255),
                         Color3.fromRGB(255, 255, 255)
@@ -4992,7 +4992,7 @@ function UI:Notification(Config)
             ZIndex = 151,
             ThemeID = { TextColor3 = "Text" }
         }, {
-            VexUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 10) })
+            CresentUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 10) })
         })
 
         local Desc
@@ -5011,7 +5011,7 @@ function UI:Notification(Config)
                 ZIndex = 151,
                 ThemeID = { TextColor3 = "Text" }
             }, {
-                VexUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 10),PaddingTop = UDim.new(0, 10)})
+                CresentUI:Create("UIPadding", { PaddingLeft = UDim.new(0, 10),PaddingTop = UDim.new(0, 10)})
             })
 
         end
@@ -5019,7 +5019,7 @@ function UI:Notification(Config)
     if Notification.Icon then
         Desc.UIPadding.PaddingLeft = UDim.new(0,33)
         Title.UIPadding.PaddingLeft = UDim.new(0,33)
-        local Icon = VexUI:Create("ImageLabel", {
+        local Icon = CresentUI:Create("ImageLabel", {
             AnchorPoint = Vector2.new(0, 0.5),
             --Image = IconsV2.GetIcon(Window.Icon),
             BackgroundTransparency = 1,
@@ -5045,7 +5045,7 @@ function UI:Notification(Config)
             Utility:TweenObject(Island, {Position = UDim2.new(0.5, 0, -0.08, 0)}, 0.3)
         end
 
-    local NotifDelay = VexUI:Create("Frame", {
+    local NotifDelay = CresentUI:Create("Frame", {
         Parent = NotifFrame,
         ClipsDescendants = true,
         AnchorPoint = Vector2.new(0,1),
@@ -5054,7 +5054,7 @@ function UI:Notification(Config)
         ZIndex = 155,
         ThemeID = { BackgroundColor3 = "Text"}
     }, {
-        VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
+        CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
     })
 
     NotifFrame.InputBegan:Connect(function(input)
@@ -5080,7 +5080,7 @@ function UI:Notification(Config)
         end
     end)
 
-    --[[local NotifFrame1 = VexUI:Create("Frame", {
+    --[[local NotifFrame1 = CresentUI:Create("Frame", {
         Parent = NotifFrame,
         BackgroundTransparency = 0.1,
         BorderSizePixel = 0,
@@ -5092,7 +5092,7 @@ function UI:Notification(Config)
         ZIndex = 120,
         ThemeID = { BackgroundColor3 = "Background"}
     }, {
-        VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
+        CresentUI:Create("UICorner", { CornerRadius = UDim.new(0, 12) }),
     })
 
     NotifFrame.MouseEnter:connect(function()
