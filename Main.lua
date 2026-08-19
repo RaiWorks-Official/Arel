@@ -1,5 +1,5 @@
 local PlaceId = game.PlaceId
-local Repo = "https://raw.githubusercontent.com/YourUser/YourRepo/main/"
+local Repo = "https://github.com/RaiWorks-Official/Arel/tree/main/Games"
 
 local Supported = {
     ["Legends of Speed"] = {
