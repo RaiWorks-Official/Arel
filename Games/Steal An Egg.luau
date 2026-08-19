@@ -14,3 +14,7 @@ old_newindex = hookmetamethod(game, "__newindex", function(self, key, value)
     return old_newindex(self, key, value)
 end)
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/refs/heads/main/UI.lua"))()
+
+local Settings = {
+  Insta_Steal = false,
+}
