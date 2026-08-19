@@ -78,6 +78,6 @@ task.spawn(function()
     if RaceEvent then
       RaceEvent:FireServer("joinRace")
     end
-    task.spawn(0.1)
+    task.wait(0.1)
   end
 end)
