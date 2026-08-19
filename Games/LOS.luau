@@ -175,7 +175,7 @@ end)
 task.spawn(function()
   while task.wait(0.1) do
     if Settings.Auto_Crystal and Settings.Selected_Crystal ~= "" then
-      local CrystalEvent = RE:FindFirstChild("openCrystal")
+      local CrystalEvent = RE:FindFirstChild("openCrystalRemote")
       if CrystalEvent then
         if CrystalEvent:IsA("RemoteFunction") then
           CrystalEvent:InvokeServer("openCrystal", Settings.Selected_Crystal)
