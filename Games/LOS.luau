@@ -19,12 +19,12 @@ local Settings = {
 }
 
 local Window = VexUI:CreateWindow({
-    Name = "Legends of Speed",
+    Name = "Cresent | Legends of Speed",
     Icon = "zap",
-    SideBarWidth = 160,
+    SideBarWidth = 180,
     Theme = "Dark",
     Transparent = true,
-    Author = "By .s.h.ark.",
+    Author = "By PRIMEZ RAI",
     Music_Player = true,
     User = {
         Enabled = true,
