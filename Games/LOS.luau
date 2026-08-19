@@ -1,4 +1,4 @@
-local library = loadstring("https://github.com/RaiWorks-Official/Arel/UI.lua")()
+-- local library = loadstring("https://github.com/RaiWorks-Official/Arel/UI.lua")()
 local hoops = workspace:FindFirstChild("Hoops")
 
 local Players = game.Players
