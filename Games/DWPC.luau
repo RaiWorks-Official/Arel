@@ -32,10 +32,10 @@ local Window = Library:CreateWindow({
     Transparent = true,
     Author = "By PRIMEZ RAI",
     Music_Player = true,
-    User = {
-        Enabled = true,
-        Anonymous = true,
-    },
+    --User = {
+     --   Enabled = true,
+      --  Anonymous = true,
+    --},
 })
 
 local Farm_Tab = Window:Tab({Title = "Farming", Icon = "zap", Border = true})
