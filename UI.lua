@@ -2322,7 +2322,7 @@ function UI:CreateWindow(Config)
         BackgroundColor3 = Color3.fromRGB(33, 33, 33),
         ZIndex = 10,
         ThemeID = {
-            BackgroundColor3 = "Background"
+            BackgroundColor3 = "MusicBox"
         }
     },{
         VexUI:Create("UICorner", { CornerRadius = UDim.new(0, 16) }),
