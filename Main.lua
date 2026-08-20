@@ -6,9 +6,9 @@ local Supported = {
         Id = 3101667897,
         File = "LOS.luau",
     },
-    ["Steal An Egg"] = {
-        Id = 18835260193,
-        File = "Steal An Egg.luau",
+    ["+1 Drain Water per Click"] = {
+        Id = 103883942725157,
+        File = "DWPC.luau",
     },
 }
 
