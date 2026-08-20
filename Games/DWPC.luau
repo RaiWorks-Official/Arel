@@ -12,8 +12,50 @@ local Settings = {
   Auto_Drain = false,
   Max_Stage = 0,
   Auto_Rebirth = false,
-  Auto_Collect_Fish = false, -- fih
+  Auto_Collect_Fish = false, -- fih :DDD
   Auto_Collect = false,
 
   Auto_Sell = false
 }
+
+task.spawn(function() 
+  while Settings. do
+
+    task.wait()
+  end
+end)
+
+task.spawn(function() 
+  while Settings. do
+
+    task.wait()
+  end
+end)
+
+task.spawn(function() 
+  while Settings. do
+
+    task.wait()
+  end
+end)
+
+task.spawn(function() 
+  while Settings. do
+
+    task.wait()
+  end
+end)
+
+task.spawn(function() 
+  while Settings. do
+
+    task.wait()
+  end
+end)
+
+task.spawn(function() 
+  while Settings. do
+
+    task.wait()
+  end
+end)
