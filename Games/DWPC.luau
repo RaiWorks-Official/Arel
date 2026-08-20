@@ -19,9 +19,15 @@ local Settings = {
 }
 
 task.spawn(function() 
-  while Settings. do
+  while Settings.Auto_Click do
+    local Level = RS.Remote.Event.Level
 
-    task.wait()
+    Level:FindFirstChild('[C-S]Click'):FireServer(0)
+    Level:FindFirstChild('[C-S]Click'):FireServer(0)
+    Level:FindFirstChild('[C-S]Click'):FireServer(0)
+    Level:FindFirstChild('[C-S]Click'):FireServer(0)
+    
+    task.wait(0.1)
   end
 end)
 
