@@ -12,7 +12,7 @@ local Supported = {
     },
     ["Driving Empire"] = {
         Id = 3351674303,
-        File = "DE.lua",
+        File = "DE.luau",
     },
 }
 
