@@ -7,7 +7,8 @@ This is an repo of obfuscated source code with its own loader
 loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Arel/refs/heads/main/Main.lua"))()
 ```
 
-## Supported Games - 2
+## Supported Games - 3
+- Driving Empire
 - +1 Drain Water Per Click
 - Legend Of Speed
 
