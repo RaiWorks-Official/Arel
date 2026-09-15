@@ -10,6 +10,10 @@ local Supported = {
         Id = 103883942725157,
         File = "DWPC.luau",
     },
+    ["Driving Empire"] = {
+        Id = 3351674303,
+        File = "DE.lua",
+    },
 }
 
 local PlaceFile = nil
