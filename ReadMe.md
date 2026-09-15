@@ -14,4 +14,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/RaiWorks-Official/Are
 
 Maintained and writen by us :)
 
-with love - Primez RAI :D
+with love - Primez RAI || Cresent :D
